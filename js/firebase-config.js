@@ -16,7 +16,7 @@ const GYM_INFO = {
     whatsapp: "917518141919",
     email: "harshitbarnwal6@gmail.com",
     adminEmail: ADMIN_EMAIL,
-    address: "Mehnahar (near petrol pump), Uttar Pradesh",
+    address: "Mehnagar (near petrol pump), Uttar Pradesh",
     hours: {
         morning: "4:00 AM - 9:00 AM",
         evening: "5:00 PM - 10:00 PM",
