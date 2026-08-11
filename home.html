@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Health & Fitness Factory | Premium Gym in Mehnagar</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Health & Fitness Factory in Mehnagar - Transform your body with expert trainers, modern equipment and personalized plans. Monthly membership ₹700. Join today.">
+    <meta name="keywords" content="gym Mehnagar, Health Fitness Factory, fitness center, workout, bodybuilding, weight loss, muscle gain, personal trainer, gym near me, Uttar Pradesh gym">
+    <meta name="author" content="Harshit Barnwal">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#FFD700">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="Health & Fitness Factory | Premium Gym in Mehnagar">
+    <meta property="og:description" content="Mehnagar's premier fitness destination. Expert training, modern equipment, real results.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Health & Fitness Factory">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Health & Fitness Factory | Mehnagar">
+    <meta name="twitter:description" content="Join the best gym in Mehnagar today. Monthly plans starting at ₹700.">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HealthClub",
+      "name": "Health & Fitness Factory",
+      "description": "Premium fitness center in Mehnagar",
+      "url": "https://healthfitnessfactory.in",
+      "telephone": "+91-7518141919",
+      "email": "harshitbarnwal6@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Near Petrol Pump",
+        "addressLocality": "Mehnagar",
+        "addressRegion": "Uttar Pradesh",
+        "addressCountry": "IN"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+          "opens": "04:00",
+          "closes": "09:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+          "opens": "17:00",
+          "closes": "22:00"
+        }
+      ],
+      "priceRange": "₹700-₹1800",
+      "founder": {
+        "@type": "Person",
+        "name": "Harshit Barnwal"
+      }
+    }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --light-gray: #F5F5F5;
+            --gray-100: #E8E8E8;
+            --gray: #666666;
+            --dark-gray: #333333;
+            --black: #000000;
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --yellow-light: #FFF8DC;
+            --yellow-glow: rgba(255, 215, 0, 0.15);
+            --error: #EF4444;
+            --success: #22C55E;
+        }
+
+        /* Global Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            background: var(--white); 
+            color: var(--dark-gray); 
+            font-family: 'Rajdhani', sans-serif; 
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--light-gray); }
+        ::-webkit-scrollbar-thumb { background: var(--yellow); border-radius: 3px; }
+
+        .container { max-width: 1180px; margin: 0 auto; padding: 0 1.5rem; }
+        section { padding: 100px 0; }
+        a { text-decoration: none; color: inherit; }
+        button { border: none; background: none; cursor: pointer; font-family: inherit; }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-family: 'Bebas Neue', cursive; letter-spacing: 0.03em; line-height: 1; }
+        .section-overline { 
+            font-family: 'Rajdhani'; font-weight: 600; font-size: 0.75rem; 
+            color: var(--yellow-dark); letter-spacing: 0.4em; 
+            background: var(--yellow-light); padding: 4px 14px; 
+            display: inline-block; margin-bottom: 1rem; text-transform: uppercase;
+        }
+        .yellow-line { width: 50px; height: 3px; background: var(--yellow); margin: 1.5rem 0; }
+        .yellow-line.centered { margin: 1.5rem auto; }
+
+        /* Reveal Animation */
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            padding: 1.2rem 0; transition: all 0.3s ease;
+        }
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+        }
+        .nav-flex { display: flex; align-items: center; justify-content: space-between; }
+        
+        .nav-brand { line-height: 1; }
+        .brand-h { font-family: 'Bebas Neue'; font-size: 1.3rem; color: var(--black); }
+        .brand-f { font-family: 'Bebas Neue'; font-size: 1.3rem; color: var(--yellow); }
+
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a {
+            font-weight: 600; font-size: 0.9rem; color: var(--black);
+            letter-spacing: 0.08em; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 50%;
+            width: 0; height: 2px; background: var(--yellow);
+            transition: width 0.3s ease; transform: translateX(-50%);
+        }
+        .nav-links a:hover { color: var(--yellow-dark); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .nav-btns { display: flex; gap: 0.5rem; align-items: center; }
+        .btn-login {
+            font-weight: 700; font-size: 0.85rem; padding: 8px 20px;
+            border: 2px solid var(--black); letter-spacing: 0.15em;
+            transition: 0.3s;
+        }
+        .btn-login:hover { background: var(--black); color: var(--yellow); }
+        .btn-join {
+            background: var(--black); color: var(--yellow);
+            font-weight: 700; font-size: 0.85rem; padding: 8px 20px;
+            border: 2px solid var(--black); letter-spacing: 0.15em;
+            transition: 0.3s;
+        }
+        .btn-join:hover { background: var(--yellow); color: var(--black); }
+
+        .hamburger { display: none; padding: 4px; }
+        .hamburger svg { transition: transform 0.3s ease; }
+        .hamburger.active svg { transform: rotate(90deg); }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed; top: 60px; left: 0; width: 100%;
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(10px);
+            z-index: 999; overflow: hidden; max-height: 0;
+            transition: all 0.4s ease; padding: 0 1.5rem;
+        }
+        .mobile-menu.open { max-height: 500px; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .mobile-menu a {
+            display: block; padding: 0.9rem 0; font-weight: 600; font-size: 1.1rem;
+            letter-spacing: 0.15em; border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        .mobile-menu a:hover { color: var(--yellow); padding-left: 8px; }
+
+        /* Hero Section */
+        .hero { padding-top: 140px; min-height: 100vh; display: flex; align-items: center; }
+        .hero-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; align-items: center; }
+        .hero-badge { 
+            display: inline-block; background: var(--yellow-light); border: 1px solid rgba(255,215,0,0.3);
+            font-weight: 600; font-size: 0.75rem; letter-spacing: 0.3em; padding: 6px 14px; margin-bottom: 1.5rem;
+        }
+        .hero-title { font-size: clamp(3.5rem, 10vw, 7rem); margin-bottom: 0.5rem; }
+        .hero-title span { color: var(--yellow); }
+        .hero-subtitle { font-size: clamp(1.4rem, 3.5vw, 2.4rem); color: rgba(0,0,0,0.25); margin-bottom: 1.5rem; }
+        .hero-desc { font-weight: 500; font-size: 1.05rem; color: var(--gray); line-height: 1.8; max-width: 500px; margin-bottom: 2rem; }
+        
+        .hero-cta { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+        .cta-primary { 
+            background: var(--black); color: var(--yellow); padding: 15px 35px; 
+            font-weight: 700; letter-spacing: 0.2em; border: 2px solid var(--black); transition: 0.3s;
+        }
+        .cta-primary:hover { background: transparent; color: var(--black); }
+        .cta-secondary {
+            border: 2px solid rgba(0,0,0,0.2); color: var(--dark-gray); padding: 15px 35px;
+            font-weight: 600; letter-spacing: 0.15em; transition: 0.3s;
+        }
+        .cta-secondary:hover { border-color: var(--yellow); color: var(--yellow-dark); }
+
+        .hero-stats { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--gray-100); display: flex; gap: 2.5rem; }
+        .stat-item .num { font-family: 'Orbitron'; font-size: 1.8rem; color: var(--black); }
+        .stat-item .lbl { font-weight: 500; font-size: 0.75rem; color: var(--gray); letter-spacing: 0.2em; margin-top: 4px; }
+
+        .hero-quote { 
+            padding: 2.5rem; border-left: 4px solid var(--yellow); background: var(--off-white);
+            font-weight: 500; font-style: italic; font-size: 1.4rem; color: var(--gray); line-height: 1.6;
+        }
+
+        /* Motivation Bar */
+        .motivation-bar { background: var(--off-white); padding: 60px 0; text-align: center; }
+        .m-text { font-size: clamp(1.5rem, 4vw, 2.5rem); letter-spacing: 0.05em; margin: 0; }
+        .m-yellow { color: var(--yellow); }
+        .m-attr { font-weight: 500; font-size: 0.85rem; color: var(--gray); letter-spacing: 0.3em; margin-top: 1rem; display: block; }
+
+        /* About Cards */
+        .about-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; }
+        .about-card {
+            background: var(--white); border: 1px solid var(--gray-100); padding: 2.5rem 2rem;
+            text-align: center; transition: 0.3s;
+        }
+        .about-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); border-color: var(--yellow); }
+        .about-icon { 
+            width: 60px; height: 60px; background: var(--yellow); display: flex; 
+            align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.4rem;
+        }
+        .about-card h3 { font-size: 1.1rem; margin-bottom: 0.8rem; letter-spacing: 0.15em; }
+        .about-card p { font-size: 0.9rem; color: var(--gray); line-height: 1.7; }
+
+        /* Timings */
+        .timings { background: var(--black); color: var(--white); text-align: center; }
+        .timings-row { display: flex; gap: 2rem; justify-content: center; margin-top: 3rem; flex-wrap: wrap; }
+        .time-card {
+            background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 2.5rem 3rem; min-width: 280px;
+        }
+        .time-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .time-lbl { font-weight: 700; color: var(--yellow); font-size: 0.85rem; letter-spacing: 0.3em; margin-bottom: 0.5rem; }
+        .time-val { font-family: 'Orbitron'; font-size: 1.4rem; }
+        .closed-tag { font-weight: 500; font-size: 0.9rem; color: rgba(255,255,255,0.4); margin-top: 2rem; display: block; }
+
+        /* Programs */
+        .prog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-top: 3rem; }
+        .prog-card {
+            background: var(--white); border: 1px solid var(--gray-100); padding: 2.5rem 1.5rem;
+            position: relative; overflow: hidden; transition: 0.3s; cursor: pointer;
+        }
+        .prog-card::before {
+            content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 0;
+            background: var(--yellow); transition: height 0.4s ease;
+        }
+        .prog-card:hover { transform: translateY(-6px); border-color: var(--yellow); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+        .prog-card:hover::before { height: 100%; }
+        .prog-num { 
+            position: absolute; top: -10px; right: 10px; font-family: 'Bebas Neue';
+            font-size: 5rem; color: rgba(255, 215, 0, 0.08);
+        }
+        .prog-card h3 { font-size: 1.1rem; margin: 1rem 0 0.8rem; position: relative; }
+        .prog-card p { font-size: 0.85rem; color: var(--gray); line-height: 1.7; position: relative; }
+        .prog-more { 
+            display: inline-block; margin-top: 1.2rem; font-weight: 600; font-size: 0.82rem; 
+            color: var(--yellow-dark); opacity: 0; transform: translateY(5px); transition: 0.3s;
+        }
+        .prog-card:hover .prog-more { opacity: 1; transform: translateY(0); }
+
+        /* Impact Section */
+        .impact { background: var(--yellow); text-align: center; }
+        .impact-row { display: flex; justify-content: center; gap: 4rem; margin-top: 3rem; flex-wrap: wrap; }
+        .impact-item .counter-num { font-family: 'Orbitron'; font-size: clamp(3rem, 6vw, 4rem); color: var(--black); display: block; }
+        .impact-item .lbl { font-weight: 600; color: var(--black); font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; }
+
+        /* Pricing */
+        .price-row { display: flex; gap: 2rem; justify-content: center; margin-top: 4rem; flex-wrap: wrap; align-items: flex-start; }
+        .price-card {
+            background: var(--white); border: 2px solid var(--gray-100); 
+            padding: 3rem 2rem; width: 100%; max-width: 320px; transition: 0.3s;
+        }
+        .price-card:hover { transform: translateY(-5px); border-color: var(--yellow); }
+        .price-card.featured { 
+            border-color: var(--yellow); transform: scale(1.05); position: relative;
+            box-shadow: 0 15px 45px rgba(255, 215, 0, 0.15);
+        }
+        .badge-value {
+            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+            background: var(--yellow); color: var(--black); font-weight: 700;
+            font-size: 0.7rem; letter-spacing: 0.2em; padding: 4px 16px;
+        }
+        .plan-name { font-weight: 700; color: var(--gray); font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; }
+        .plan-price { margin: 1.5rem 0; }
+        .price-curr { font-weight: 400; font-size: 1.2rem; color: var(--black); margin-right: 4px; }
+        .price-amt { font-family: 'Orbitron'; font-size: 3rem; color: var(--black); }
+        .price-dur { font-size: 0.9rem; color: var(--gray); }
+        
+        .save-tag { 
+            background: var(--yellow-light); border: 1px solid var(--yellow); 
+            color: var(--yellow-dark); font-weight: 700; font-size: 0.7rem; 
+            padding: 2px 8px; margin-top: 4px; display: inline-block;
+        }
+        .price-list { list-style: none; margin: 2rem 0; }
+        .price-list li { 
+            display: flex; align-items: center; gap: 0.8rem; 
+            font-weight: 500; font-size: 0.9rem; margin-bottom: 0.8rem;
+        }
+        .check-icon { color: var(--yellow); font-weight: 700; }
+        .price-btn {
+            width: 100%; padding: 15px; border: 2px solid var(--black);
+            font-weight: 700; font-size: 0.85rem; letter-spacing: 0.2em;
+            transition: 0.3s;
+        }
+        .price-btn:hover { background: var(--black); color: var(--yellow); }
+        .featured .price-btn { background: var(--yellow); border-color: var(--yellow); }
+        .featured .price-btn:hover { background: var(--black); border-color: var(--black); color: var(--yellow); }
+
+        /* Testimonials */
+        .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; }
+        .test-card { background: var(--off-white); border: 1px solid var(--gray-100); padding: 2.5rem; position: relative; transition: 0.3s; }
+        .test-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .quote-icon { 
+            font-family: 'Bebas Neue'; font-size: 4rem; color: rgba(255, 215, 0, 0.2); 
+            position: absolute; top: 1rem; right: 1.5rem; 
+        }
+        .stars { color: var(--yellow); font-size: 0.9rem; margin-bottom: 1rem; }
+        .test-text { font-weight: 400; font-size: 0.95rem; color: #444; line-height: 1.8; font-style: italic; }
+        .test-user { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; padding-top: 1.2rem; border-top: 1px solid var(--gray-100); }
+        .user-avatar { width: 40px; height: 40px; background: var(--yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .user-name { font-weight: 700; font-size: 0.95rem; color: var(--black); }
+        .user-ach { font-size: 0.82rem; color: var(--gray); margin-top: 2px; }
+
+        /* CTA */
+        .cta-section { background: var(--black); color: var(--white); text-align: center; }
+        .cta-overline { font-weight: 600; color: var(--yellow); font-size: 0.75rem; letter-spacing: 0.4em; }
+        .cta-title { font-size: clamp(3rem, 8vw, 6rem); margin: 1rem 0; }
+        .cta-title span { color: var(--yellow); }
+        .cta-desc { font-weight: 500; font-size: 1.1rem; color: rgba(255,255,255,0.7); line-height: 1.7; max-width: 450px; margin: 0 auto 2.5rem; }
+        .btn-large {
+            background: var(--yellow); color: var(--black); padding: 20px 60px;
+            font-weight: 700; font-size: 1rem; letter-spacing: 0.25em; transition: 0.4s;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); animation: pulseGlow 2s infinite alternate;
+        }
+        .btn-large:hover { background: var(--white); transform: scale(1.05); }
+        @keyframes pulseGlow { 
+            from { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); } 
+            to { box-shadow: 0 0 50px rgba(255, 215, 0, 0.6); } 
+        }
+        .cta-small { font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-top: 1.5rem; letter-spacing: 0.1em; }
+
+        /* Footer */
+        .footer { background: var(--black); color: var(--white); border-top: 1px solid rgba(255,215,0,0.1); padding: 80px 0 40px; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 4rem; }
+        .footer-brand { margin-bottom: 1.5rem; }
+        .footer-desc { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin: 1.2rem 0; }
+        .social-row { display: flex; gap: 0.8rem; }
+        .social-link {
+            width: 38px; height: 38px; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.2);
+            color: var(--yellow); display: flex; align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .social-link:hover { background: var(--yellow); color: var(--black); transform: translateY(-3px); }
+        
+        .footer-h { font-weight: 700; color: var(--yellow); font-size: 0.85rem; letter-spacing: 0.3em; margin-bottom: 1.5rem; text-transform: uppercase; }
+        .footer-links a { display: block; font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 0.8rem; transition: 0.3s; }
+        .footer-links a:hover { color: var(--yellow); padding-left: 5px; }
+
+        .contact-item { display: flex; gap: 1rem; margin-bottom: 1.2rem; }
+        .contact-icon { color: var(--yellow); font-size: 1.1rem; }
+        .contact-text { font-size: 0.85rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
+        .contact-text a:hover { color: var(--yellow); }
+
+        .footer-bottom { 
+            margin-top: 4rem; padding-top: 2rem; border-top: 1px solid rgba(255,215,0,0.08);
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+            font-size: 0.8rem; color: rgba(255,255,255,0.4);
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 992px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .hero-grid { grid-template-columns: 1fr; }
+            .hero-right { display: none; }
+            .prog-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav-links, .nav-btns { display: none; }
+            .hamburger { display: block; }
+            .about-grid, .prog-grid, .test-grid { grid-template-columns: 1fr; }
+            .hero-stats { justify-content: space-around; gap: 1.5rem; }
+            section { padding: 60px 0; }
+            .hero { padding-top: 100px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container nav-flex">
+            <a href="#hero" class="nav-brand">
+                <div class="brand-h">HEALTH & FITNESS</div>
+                <div class="brand-f">FACTORY</div>
+            </a>
+            
+            <div class="nav-links">
+                <a href="#hero">HOME</a>
+                <a href="#about">ABOUT</a>
+                <a href="#programs">PROGRAMS</a>
+                <a href="#membership">PLANS</a>
+                <a href="#contact">CONTACT</a>
+            </div>
+
+            <div class="nav-btns">
+                <a href="auth.html" class="btn-login">LOGIN</a>
+                <a href="auth.html" class="btn-join">JOIN NOW</a>
+            </div>
+
+            <button class="hamburger" id="hamburger">
+                <svg width="36" height="16" viewBox="0 0 36 16">
+                    <rect x="0" y="2" width="6" height="12" rx="1.5" fill="#000000"/>
+                    <rect x="6" y="4" width="3" height="8" rx="1" fill="#333333"/>
+                    <rect x="9" y="6" width="18" height="4" rx="2" fill="#000000"/>
+                    <rect x="27" y="4" width="3" height="8" rx="1" fill="#333333"/>
+                    <rect x="30" y="2" width="6" height="12" rx="1.5" fill="#000000"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#hero">HOME</a>
+        <a href="#about">ABOUT</a>
+        <a href="#programs">PROGRAMS</a>
+        <a href="#membership">PLANS</a>
+        <a href="#contact">CONTACT</a>
+        <a href="auth.html">LOGIN</a>
+        <a href="auth.html" style="color: var(--yellow-dark);">JOIN NOW</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="hero">
+        <div class="container hero-grid">
+            <div class="hero-left">
+                <div class="hero-badge reveal">⚡ MEHNAGAR'S PREMIUM GYM</div>
+                <h1 class="hero-title reveal delay-1">TRANSFORM<br><span>YOUR BODY.</span></h1>
+                <h2 class="hero-subtitle reveal delay-2">TRANSFORM YOUR LIFE.</h2>
+                <p class="hero-desc reveal delay-3">Expert trainers. Modern equipment. Personalized plans. Real results. Join Health & Fitness Factory and become the strongest version of yourself.</p>
+                <div class="hero-cta reveal delay-4">
+                    <a href="auth.html" class="cta-primary">JOIN NOW</a>
+                    <a href="#programs" class="cta-secondary">EXPLORE</a>
+                </div>
+                <div class="hero-stats reveal delay-4">
+                    <div class="stat-item">
+                        <div class="num counter-num" data-target="500">0+</div>
+                        <div class="lbl">MEMBERS</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="num counter-num" data-target="5">0+</div>
+                        <div class="lbl">TRAINERS</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="num counter-num" data-target="3">0+</div>
+                        <div class="lbl">YEARS</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right reveal">
+                <div class="hero-quote">
+                    "The pain you feel today<br>will be the strength<br>you feel tomorrow."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MOTIVATION -->
+    <div class="motivation-bar">
+        <div class="container">
+            <h2 class="m-text reveal">BEAST MODE IS NOT A SWITCH. <span class="m-yellow">IT'S A LIFESTYLE.</span></h2>
+            <div class="yellow-line centered reveal"></div>
+            <span class="m-attr reveal">— HEALTH & FITNESS FACTORY</span>
+        </div>
+    </div>
+
+    <!-- ABOUT SECTION -->
+    <section id="about">
+        <div class="container" style="text-align: center;">
+            <div class="section-overline reveal">ABOUT US</div>
+            <h2 class="hero-title reveal" style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 0;">WHERE STRENGTH IS BUILT</h2>
+            <div class="yellow-line centered reveal"></div>
+            <p class="hero-desc reveal" style="margin: 0 auto; max-width: 700px;">At Health & Fitness Factory, we believe every rep counts, every drop of sweat matters, and every goal is achievable. Located in the heart of Mehnagar, we provide world-class training and a community that pushes you to greatness.</p>
+            
+            <div class="about-grid">
+                <div class="about-card reveal">
+                    <div class="about-icon">🏋️</div>
+                    <h3>EXPERT TRAINERS</h3>
+                    <p>Certified professionals dedicated to your fitness journey and proper form.</p>
+                </div>
+                <div class="about-card reveal delay-1">
+                    <div class="about-icon">⚡</div>
+                    <h3>MODERN EQUIPMENT</h3>
+                    <p>Top quality machines and free weights for all fitness levels and goals.</p>
+                </div>
+                <div class="about-card reveal delay-2">
+                    <div class="about-icon">🎯</div>
+                    <h3>REAL RESULTS</h3>
+                    <p>Proven training methods that deliver lasting physical and mental transformations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TIMINGS -->
+    <section class="timings">
+        <div class="container">
+            <div class="section-overline reveal">OPEN 6 DAYS A WEEK</div>
+            <h2 class="hero-title reveal" style="font-size: clamp(2rem, 5vw, 3.5rem); color: white;">WORKOUT TIMINGS</h2>
+            <div class="yellow-line centered reveal"></div>
+            
+            <div class="timings-row">
+                <div class="time-card reveal">
+                    <span class="time-icon">☀️</span>
+                    <div class="time-lbl">MORNING SESSION</div>
+                    <div class="time-val">4:00 AM - 9:00 AM</div>
+                </div>
+                <div class="time-card reveal delay-1">
+                    <span class="time-icon">🌙</span>
+                    <div class="time-lbl">EVENING SESSION</div>
+                    <div class="time-val">5:00 PM - 10:00 PM</div>
+                </div>
+            </div>
+            <span class="closed-tag reveal">Sunday Closed</span>
+        </div>
+    </section>
+
+    <!-- PROGRAMS -->
+    <section id="programs">
+        <div class="container" style="text-align: center;">
+            <div class="section-overline reveal">OUR PROGRAMS</div>
+            <h2 class="hero-title reveal" style="font-size: clamp(2rem, 5vw, 3.5rem);">TRAIN FOR YOUR GOAL</h2>
+            <div class="yellow-line centered reveal"></div>
+
+            <div class="prog-grid">
+                <div class="prog-card reveal">
+                    <div class="prog-num">01</div>
+                    <span>🔥</span>
+                    <h3>WEIGHT LOSS</h3>
+                    <p>Science-backed HIIT and cardio programs for maximum fat burning.</p>
+                    <a href="auth.html" class="prog-more">Learn more →</a>
+                </div>
+                <div class="prog-card reveal delay-1">
+                    <div class="prog-num">02</div>
+                    <span>💪</span>
+                    <h3>MUSCLE GAIN</h3>
+                    <p>Progressive overload training with proper nutrition for lean mass.</p>
+                    <a href="auth.html" class="prog-more">Learn more →</a>
+                </div>
+                <div class="prog-card reveal delay-2">
+                    <div class="prog-num">03</div>
+                    <span>🏃</span>
+                    <h3>CARDIO ENDURANCE</h3>
+                    <p>Build stamina, heart health, and overall athletic performance.</p>
+                    <a href="auth.html" class="prog-more">Learn more →</a>
+                </div>
+                <div class="prog-card reveal delay-3">
+                    <div class="prog-num">04</div>
+                    <span>🧘</span>
+                    <h3>FLEXIBILITY</h3>
+                    <p>Improve mobility and prevent injury with proper stretching guidance.</p>
+                    <a href="auth.html" class="prog-more">Learn more →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IMPACT STATS -->
+    <div class="impact stats-section">
+        <div class="container">
+            <div class="impact-row">
+                <div class="impact-item reveal">
+                    <span class="counter-num" data-target="500">0+</span>
+                    <span class="lbl">MEMBERS</span>
+                </div>
+                <div class="impact-item reveal delay-1">
+                    <span class="counter-num" data-target="1000">0+</span>
+                    <span class="lbl">WORKOUTS DAILY</span>
+                </div>
+                <div class="impact-item reveal delay-2">
+                    <span class="counter-num" data-target="50">0+</span>
+                    <span class="lbl">TRANSFORMATIONS</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MEMBERSHIP -->
+    <section id="membership">
+        <div class="container" style="text-align: center;">
+            <div class="section-overline reveal">MEMBERSHIP PLANS</div>
+            <h2 class="hero-title reveal" style="font-size: clamp(2rem, 5vw, 3.5rem);">SIMPLE PRICING</h2>
+            <p class="hero-desc reveal" style="margin: 0 auto;">No hidden fees. Just results.</p>
+            
+            <div class="price-row">
+                <!-- Monthly -->
+                <div class="price-card reveal">
+                    <div class="plan-name">MONTHLY</div>
+                    <div class="plan-price">
+                        <span class="price-curr">₹</span>
+                        <span class="price-amt">700</span>
+                        <span class="price-dur">/month</span>
+                    </div>
+                    <ul class="price-list">
+                        <li><span class="check-icon">✓</span> Full gym access</li>
+                        <li><span class="check-icon">✓</span> All equipment usage</li>
+                        <li><span class="check-icon">✓</span> Basic workout guidance</li>
+                        <li><span class="check-icon">✓</span> Locker room access</li>
+                        <li><span class="check-icon">✓</span> Fitness assessment</li>
+                    </ul>
+                    <a href="auth.html" class="price-btn">CHOOSE MONTHLY</a>
+                </div>
+
+                <!-- 3 Months -->
+                <div class="price-card featured reveal delay-1">
+                    <div class="badge-value">BEST VALUE</div>
+                    <div class="plan-name">3 MONTHS</div>
+                    <div class="plan-price">
+                        <span class="price-curr">₹</span>
+                        <span class="price-amt">1,800</span>
+                    </div>
+                    <div class="save-tag">SAVE ₹300</div>
+                    <ul class="price-list">
+                        <li><span class="check-icon">✓</span> Full gym access</li>
+                        <li><span class="check-icon">✓</span> Priority support</li>
+                        <li><span class="check-icon">✓</span> Free diet consultation</li>
+                        <li><span class="check-icon">✓</span> All equipment usage</li>
+                        <li><span class="check-icon">✓</span> Locker room access</li>
+                        <li><span class="check-icon">✓</span> Save ₹300 vs Monthly</li>
+                    </ul>
+                    <a href="auth.html" class="price-btn">CHOOSE 3 MONTHS</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials">
+        <div class="container">
+            <div class="section-overline reveal">MEMBER STORIES</div>
+            <h2 class="hero-title reveal" style="font-size: clamp(2rem, 5vw, 3.5rem);">REAL RESULTS</h2>
+            <div class="yellow-line reveal"></div>
+
+            <div class="test-grid">
+                <div class="test-card reveal">
+                    <div class="quote-icon">"</div>
+                    <div class="stars">★★★★★</div>
+                    <p class="test-text">"I lost 15kg in just 4 months. The trainers at Health & Fitness Factory transformed my life. Best decision I ever made."</p>
+                    <div class="test-user">
+                        <div class="user-avatar">R</div>
+                        <div>
+                            <div class="user-name">Rahul Sharma</div>
+                            <div class="user-ach">Lost 15kg in 4 months</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="test-card reveal delay-1">
+                    <div class="quote-icon">"</div>
+                    <div class="stars">★★★★★</div>
+                    <p class="test-text">"The atmosphere is incredible. Modern equipment and personal guidance helped me build 8kg of pure muscle. Highly recommended!"</p>
+                    <div class="test-user">
+                        <div class="user-avatar">P</div>
+                        <div>
+                            <div class="user-name">Priya Patel</div>
+                            <div class="user-ach">Gained 8kg muscle</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="test-card reveal delay-2">
+                    <div class="quote-icon">"</div>
+                    <div class="stars">★★★★★</div>
+                    <p class="test-text">"Best gym in Mehnagar without a doubt. Professional trainers, clean facility, and results that speak for themselves."</p>
+                    <div class="test-user">
+                        <div class="user-avatar">A</div>
+                        <div>
+                            <div class="user-name">Arjun Singh</div>
+                            <div class="user-ach">Total Transformation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section">
+        <div class="container">
+            <span class="cta-overline reveal">START TODAY</span>
+            <h2 class="cta-title reveal">READY TO <span>BEGIN?</span></h2>
+            <p class="cta-desc reveal">Join Health & Fitness Factory today. Your transformation starts now.</p>
+            <a href="auth.html" class="btn-large reveal">JOIN NOW</a>
+            <p class="cta-small reveal">No commitment • Cancel anytime</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="contact">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <div class="footer-brand">
+                    <div class="brand-h" style="color: var(--yellow);">HEALTH & FITNESS</div>
+                    <div class="brand-f" style="color: white;">FACTORY</div>
+                    <span style="font-size: 0.6rem; letter-spacing: 0.4em; color: var(--gray);">MEHNAGAR</span>
+                </div>
+                <p class="footer-desc">Premium fitness center in Mehnagar dedicated to transforming lives through proven training methods and expert guidance.</p>
+                <div class="social-row">
+                    <a href="#" class="social-link">IG</a>
+                    <a href="#" class="social-link">YT</a>
+                    <a href="https://wa.me/917518141919" class="social-link">WA</a>
+                </div>
+            </div>
+
+            <div class="footer-col footer-links">
+                <div class="footer-h">QUICK LINKS</div>
+                <a href="#hero">Home</a>
+                <a href="#about">About</a>
+                <a href="#programs">Programs</a>
+                <a href="#membership">Plans</a>
+                <a href="#contact">Contact</a>
+            </div>
+
+            <div class="footer-col footer-links">
+                <div class="footer-h">PROGRAMS</div>
+                <a href="auth.html">Weight Loss</a>
+                <a href="auth.html">Muscle Gain</a>
+                <a href="auth.html">Cardio Endurance</a>
+                <a href="auth.html">Flexibility</a>
+                <a href="auth.html">Personal Training</a>
+            </div>
+
+            <div class="footer-col">
+                <div class="footer-h">CONTACT US</div>
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <span class="contact-text">Near Petrol Pump,<br>Mehnagar, UP 276204</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <span class="contact-text"><a href="tel:+917518141919">+91 75181 41919</a></span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <span class="contact-text"><a href="mailto:harshitbarnwal6@gmail.com">harshitbarnwal6@gmail.com</a></span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🕐</span>
+                    <span class="contact-text">Mon-Sat: 4-9 AM, 5-10 PM<br>Sunday Closed</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <span>© 2026 Health & Fitness Factory. All rights reserved.</span>
+            <span>Privacy | Terms | Made by Harshit Barnwal</span>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Navbar Scroll Effect
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }, { passive: true });
+
+            // Mobile Menu Toggle
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                mobileMenu.classList.toggle('open');
+            });
+
+            // Close Mobile Menu on Link Click
+            document.querySelectorAll('.mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    mobileMenu.classList.remove('open');
+                });
+            });
+
+            // Reveal Animation Observer
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+            // Stats Counter Logic
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counters = entry.target.querySelectorAll('.counter-num');
+                        counters.forEach(counter => {
+                            const target = parseInt(counter.getAttribute('data-target'));
+                            animateCounter(counter, target);
+                        });
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            const statsSection = document.querySelector('.stats-section');
+            if (statsSection) counterObserver.observe(statsSection);
+
+            function animateCounter(el, target) {
+                let current = 0;
+                const duration = 2000;
+                const frameRate = 33;
+                const totalFrames = duration / frameRate;
+                const increment = target / totalFrames;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        el.textContent = target + '+';
+                        clearInterval(timer);
+                    } else {
+                        el.textContent = Math.floor(current) + '+';
+                    }
+                }, frameRate);
+            }
+
+            // Hero Page Load Anim
+            setTimeout(() => {
+                document.querySelectorAll('#hero .reveal').forEach(el => el.classList.add('visible'));
+            }, 100);
+        });
+    </script>
+</body>
+</html>

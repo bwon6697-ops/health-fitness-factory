@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator | Health & Fitness Factory | Mehnagar</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Free BMI calculator by Health & Fitness Factory in Mehnagar. Calculate your Body Mass Index and get personalized fitness recommendations.">
+    <meta name="keywords" content="BMI calculator, body mass index, fitness Mehnagar, health calculator, weight calculator">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="author" content="Harshit Barnwal">
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --light-gray: #F5F5F5;
+            --gray-100: #E8E8E8;
+            --gray: #666666;
+            --dark-gray: #333333;
+            --black: #000000;
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --yellow-light: #FFF8DC;
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --blue: #3B82F6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--white); color: var(--dark-gray); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.97); border-bottom: 1px solid var(--gray-100);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; z-index: 1000;
+        }
+        .back-link { font-weight: 500; font-size: 0.85rem; color: var(--gray); text-decoration: none; letter-spacing: 0.15em; transition: 0.3s; }
+        .back-link:hover { color: var(--black); }
+        .nav-brand { font-family: 'Bebas Neue'; line-height: 1; text-align: center; }
+        .brand-h { font-size: 1.1rem; color: var(--black); }
+        .brand-f { font-size: 1.1rem; color: var(--yellow); }
+        .nav-right { font-weight: 600; font-size: 0.7rem; color: var(--yellow-dark); letter-spacing: 0.25em; text-transform: uppercase; }
+
+        /* Main Layout */
+        .main-container { max-width: 900px; margin: 0 auto; padding: 100px 1.5rem 3rem; }
+
+        .header-section { text-align: center; margin-bottom: 3rem; }
+        .badge { background: var(--yellow-light); color: var(--yellow-dark); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.4em; padding: 4px 14px; display: inline-block; margin-bottom: 1rem; }
+        .title { font-family: 'Bebas Neue'; font-size: clamp(2.5rem, 6vw, 4rem); color: var(--black); letter-spacing: 0.03em; }
+        .line { width: 60px; height: 3px; background: var(--yellow); margin: 1rem auto; }
+        .subtitle { font-weight: 400; font-size: 1rem; color: var(--gray); line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+        /* Calculator Grid */
+        .calculator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+        .input-card { background: var(--off-white); border: 1px solid var(--gray-100); padding: 2rem; }
+        .input-card h2 { font-weight: 700; color: var(--black); font-size: 1rem; letter-spacing: 0.15em; margin-bottom: 1.5rem; text-transform: uppercase; }
+
+        .input-group { margin-bottom: 1.2rem; position: relative; }
+        .label { display: block; font-weight: 600; font-size: 0.75rem; color: var(--gray); letter-spacing: 0.2em; margin-bottom: 0.5rem; text-transform: uppercase; }
+
+        .gender-row { display: flex; gap: 0.5rem; margin-bottom: 1.2rem; }
+        .gender-btn { flex: 1; background: var(--white); border: 2px solid var(--gray-100); padding: 12px; font-weight: 600; font-size: 0.85rem; color: var(--gray); cursor: pointer; transition: 0.3s; }
+        .gender-btn.selected { border-color: var(--yellow); background: rgba(255, 215, 0, 0.1); color: var(--black); }
+
+        input { width: 100%; background: var(--white); border: 2px solid var(--gray-100); padding: 13px 15px; font-family: 'Rajdhani'; font-weight: 500; font-size: 1rem; color: var(--black); outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--yellow); }
+        .input-wrapper { position: relative; }
+        .suffix { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gray); font-size: 0.85rem; font-weight: 500; pointer-events: none; }
+
+        /* Tabs */
+        .tab-row { display: flex; margin-bottom: 0.5rem; border-bottom: 1px solid var(--gray-100); }
+        .tab { background: none; border: none; padding: 8px 15px; font-weight: 600; font-size: 0.75rem; color: var(--gray); cursor: pointer; position: relative; }
+        .tab.active { color: var(--black); }
+        .tab.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--yellow); }
+
+        .calc-btn { width: 100%; background: var(--black); color: var(--yellow); padding: 16px; border: 2px solid var(--black); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.3em; cursor: pointer; transition: 0.3s; }
+        .calc-btn:hover { background: var(--yellow); color: var(--black); }
+
+        /* Results Card */
+        .result-card { background: var(--white); border: 1px solid var(--gray-100); padding: 3rem 2rem; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+        .result-card.active { border: 2px solid var(--yellow); }
+        .res-num { font-family: 'Orbitron'; font-size: 4rem; color: var(--black); margin: 0.5rem 0; }
+        .res-cat { display: inline-block; padding: 6px 20px; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.2em; border: 2px solid var(--gray-100); margin-bottom: 1.5rem; }
+        .res-range-lbl { font-weight: 600; font-size: 0.7rem; color: var(--gray); letter-spacing: 0.3em; text-transform: uppercase; }
+        .res-range-val { font-family: 'Orbitron'; font-size: 1.2rem; color: var(--black); margin-top: 0.3rem; }
+
+        /* Visual Scale */
+        .scale-section { margin-bottom: 3rem; position: relative; padding-top: 30px; }
+        .scale-marker { position: absolute; top: 0; height: 75px; width: 3px; background: var(--black); display: none; transition: left 0.5s ease-in-out; }
+        .marker-val { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-weight: 700; font-size: 0.8rem; }
+        .scale-bar { width: 100%; height: 30px; display: flex; border-radius: 4px; overflow: hidden; }
+        .scale-segment { height: 100%; display: flex; align-items: center; justify-content: center; color: var(--white); font-size: 0.6rem; font-weight: 700; }
+        .scale-labels { display: flex; justify-content: space-between; margin-top: 0.5rem; }
+        .scale-labels span { font-size: 0.65rem; color: var(--gray); font-weight: 600; }
+
+        /* Recommendations */
+        .recommendation-box { background: var(--off-white); border-left: 4px solid var(--yellow); padding: 2rem; margin-bottom: 3rem; }
+        .recommendation-box h3 { font-weight: 700; color: var(--black); font-size: 1rem; letter-spacing: 0.15em; margin-bottom: 1rem; }
+        .rec-list { list-style: none; }
+        .rec-list li { font-weight: 500; font-size: 0.9rem; color: var(--dark-gray); line-height: 1.7; margin-bottom: 0.6rem; display: flex; align-items: flex-start; gap: 10px; }
+        .check-icon { color: var(--yellow-dark); font-weight: 700; }
+
+        /* Info Cards */
+        .info-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 3rem; }
+        .info-card { background: var(--white); border: 1px solid var(--gray-100); padding: 1.5rem; text-align: center; }
+        .info-card h4 { font-weight: 700; font-size: 0.85rem; letter-spacing: 0.15em; margin-bottom: 5px; }
+        .info-range { font-family: 'Orbitron'; font-size: 1.1rem; color: var(--black); margin-bottom: 5px; }
+        .info-desc { font-weight: 400; font-size: 0.75rem; color: var(--gray); }
+
+        /* CTA */
+        .cta-box { background: var(--black); color: var(--white); padding: 3.5rem 2rem; text-align: center; margin-bottom: 2rem; }
+        .cta-title { font-family: 'Bebas Neue'; font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 1rem; letter-spacing: 0.03em; }
+        .cta-desc { font-weight: 500; font-size: 0.95rem; color: rgba(255, 255, 255, 0.7); line-height: 1.7; max-width: 500px; margin: 0 auto 2rem; }
+        .cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn-join { background: var(--yellow); color: var(--black); padding: 14px 32px; font-weight: 700; letter-spacing: 0.2em; transition: 0.3s; }
+        .btn-join:hover { background: var(--white); }
+        .btn-contact { background: transparent; color: var(--white); border: 2px solid rgba(255, 255, 255, 0.3); padding: 12px 30px; font-weight: 700; letter-spacing: 0.2em; transition: 0.3s; }
+        .btn-contact:hover { border-color: var(--yellow); color: var(--yellow); }
+
+        .disclaimer { background: var(--off-white); border-left: 3px solid var(--gray); padding: 1rem; font-size: 0.8rem; color: var(--gray); line-height: 1.6; margin-bottom: 3rem; border-radius: 4px; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 768px) {
+            .calculator-grid { grid-template-columns: 1fr; }
+            .info-cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-right { display: none; }
+        }
+        @media (max-width: 480px) {
+            .info-cards-grid { grid-template-columns: 1fr; }
+            .res-num { font-size: 3.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="home.html" class="back-link">← BACK</a>
+        <div class="nav-brand">
+            <span class="brand-h">HEALTH & FITNESS</span>
+            <span class="brand-f">FACTORY</span>
+        </div>
+        <div class="nav-right">BMI CALCULATOR</div>
+    </nav>
+
+    <main class="main-container">
+        
+        <header class="header-section">
+            <span class="badge">FREE CALCULATOR</span>
+            <h1 class="title">BMI CALCULATOR</h1>
+            <div class="line"></div>
+            <p class="subtitle">Calculate your Body Mass Index and understand what it means for your health</p>
+        </header>
+
+        <section class="calculator-grid">
+            <!-- INPUTS -->
+            <div class="input-card">
+                <h2>Enter Your Details</h2>
+                
+                <div class="input-group">
+                    <label class="label">Gender</label>
+                    <div class="gender-row">
+                        <button type="button" class="gender-btn" data-gender="male">MALE</button>
+                        <button type="button" class="gender-btn" data-gender="female">FEMALE</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="label">Age</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="ageInput" placeholder="Your age">
+                        <span class="suffix">years</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="label">Height</label>
+                    <div class="tab-row">
+                        <button type="button" class="tab active" onclick="setHeightMode('cm', this)">CM</button>
+                        <button type="button" class="tab" onclick="setHeightMode('ft', this)">FT/IN</button>
+                    </div>
+                    <div id="cmBox" class="input-wrapper">
+                        <input type="number" id="heightCm" placeholder="Height in cm">
+                        <span class="suffix">cm</span>
+                    </div>
+                    <div id="ftBox" class="hidden" style="display: flex; gap: 10px;">
+                        <div class="input-wrapper" style="flex: 1;">
+                            <input type="number" id="heightFt" placeholder="Ft">
+                            <span class="suffix">ft</span>
+                        </div>
+                        <div class="input-wrapper" style="flex: 1;">
+                            <input type="number" id="heightIn" placeholder="In">
+                            <span class="suffix">in</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="label">Weight</label>
+                    <div class="tab-row">
+                        <button type="button" class="tab active" onclick="setWeightMode('kg', this)">KG</button>
+                        <button type="button" class="tab" onclick="setWeightMode('lb', this)">LBS</button>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="number" id="weightInput" placeholder="Weight">
+                        <span class="suffix" id="weightSuf">kg</span>
+                    </div>
+                </div>
+
+                <button type="button" class="calc-btn" onclick="calculateBMI()">CALCULATE BMI</button>
+            </div>
+
+            <!-- RESULT -->
+            <div class="result-card" id="resultCard">
+                <div id="resultPlaceholder">
+                    <div style="width: 80px; height: 80px; background: var(--yellow-light); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 2rem;">📊</div>
+                    <p style="font-weight: 500; color: var(--gray); font-size: 0.9rem;">Enter your details to see your BMI results and healthy weight range.</p>
+                </div>
+                <div id="resultContent" class="hidden">
+                    <span class="res-range-lbl">Your BMI</span>
+                    <div class="res-num" id="bmiVal">0.0</div>
+                    <div class="res-cat" id="bmiCat">NORMAL</div>
+                    <div style="width: 100%; height: 1px; background: var(--gray-100); margin: 1.5rem 0;"></div>
+                    <span class="res-range-lbl">Ideal Weight Range</span>
+                    <div class="res-range-val" id="idealRange">55 kg - 74 kg</div>
+                    <p style="font-weight: 400; font-size: 0.85rem; color: var(--gray); margin-top: 1rem; line-height: 1.6;">Based on your height, this is the weight range where you would have a 'Normal' BMI.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCALE -->
+        <section id="scaleSection" class="scale-section hidden">
+            <label class="res-range-lbl" style="margin-bottom: 1rem; display: block;">BMI Scale</label>
+            <div class="scale-marker" id="bmiMarker">
+                <div class="marker-val" id="markerBmi">YOUR BMI: 22.5</div>
+            </div>
+            <div class="scale-bar">
+                <div class="scale-segment" style="width: 30%; background: var(--warning);">UNDER</div>
+                <div class="scale-segment" style="width: 25%; background: var(--success);">NORMAL</div>
+                <div class="scale-segment" style="width: 20%; background: var(--warning);">OVER</div>
+                <div class="scale-segment" style="width: 25%; background: var(--error);">OBESE</div>
+            </div>
+            <div class="scale-labels">
+                <span>15.0</span>
+                <span>18.5</span>
+                <span>25.0</span>
+                <span>30.0</span>
+                <span>40.0+</span>
+            </div>
+        </section>
+
+        <!-- RECOMMENDATIONS -->
+        <section id="recommendationSection" class="recommendation-box hidden">
+            <h3>Recommendations</h3>
+            <ul class="rec-list" id="recList">
+                <!-- Injected via JS -->
+            </ul>
+        </section>
+
+        <!-- INFO CARDS -->
+        <section class="info-cards-grid">
+            <div class="info-card" style="border-top: 4px solid var(--warning);">
+                <h4>Underweight</h4>
+                <p class="info-range">Below 18.5</p>
+                <p class="info-desc">Below healthy weight range</p>
+            </div>
+            <div class="info-card" style="border-top: 4px solid var(--success);">
+                <h4>Normal</h4>
+                <p class="info-range">18.5 - 24.9</p>
+                <p class="info-desc">Healthy weight range</p>
+            </div>
+            <div class="info-card" style="border-top: 4px solid var(--warning);">
+                <h4>Overweight</h4>
+                <p class="info-range">25.0 - 29.9</p>
+                <p class="info-desc">Above healthy weight range</p>
+            </div>
+            <div class="info-card" style="border-top: 4px solid var(--error);">
+                <h4>Obese</h4>
+                <p class="info-range">30.0 or Above</p>
+                <p class="info-desc">Health risk category</p>
+            </div>
+        </section>
+
+        <!-- JOIN CTA -->
+        <section class="cta-box">
+            <h2 class="cta-title">TRANSFORM YOUR BODY AT<br>HEALTH & FITNESS FACTORY</h2>
+            <p class="cta-desc">Join us in Mehnagar and get personalized workout plans, nutrition guidance, and expert trainers to help you achieve your fitness goals.</p>
+            <div class="cta-btns">
+                <a href="auth.html" class="btn-join">JOIN NOW</a>
+                <a href="contact.html" class="btn-contact">CONTACT US</a>
+            </div>
+        </section>
+
+        <div class="disclaimer">
+            ⚠️ BMI is a general indicator and may not be accurate for athletes with high muscle mass, pregnant women, elderly, or children. Consult a healthcare professional for personalized health advice.
+        </div>
+
+    </main>
+
+    <script>
+        let selectedGender = '';
+        let heightMode = 'cm';
+        let weightMode = 'kg';
+
+        // Gender Selection
+        document.querySelectorAll('.gender-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedGender = btn.dataset.gender;
+            }
+        });
+
+        function setHeightMode(mode, btn) {
+            heightMode = mode;
+            btn.parentNode.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('cmBox').classList.toggle('hidden', mode !== 'cm');
+            document.getElementById('ftBox').classList.toggle('hidden', mode !== 'ft');
+        }
+
+        function setWeightMode(mode, btn) {
+            weightMode = mode;
+            btn.parentNode.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('weightSuf').innerText = mode === 'kg' ? 'kg' : 'lbs';
+        }
+
+        function calculateBMI() {
+            if(!selectedGender) return alert("Please select gender");
+            
+            const age = document.getElementById('ageInput').value;
+            if(!age || age < 10 || age > 100) return alert("Enter a valid age (10-100)");
+
+            let heightCm = 0;
+            if(heightMode === 'cm') {
+                heightCm = document.getElementById('heightCm').value;
+                if(!heightCm || heightCm < 100 || heightCm > 250) return alert("Enter valid height (100-250cm)");
+            } else {
+                const ft = parseInt(document.getElementById('heightFt').value) || 0;
+                const inch = parseInt(document.getElementById('heightIn').value) || 0;
+                if(ft < 3 || ft > 8) return alert("Enter valid height (3-8ft)");
+                heightCm = (ft * 12 + inch) * 2.54;
+            }
+
+            let weightKg = document.getElementById('weightInput').value;
+            if(!weightKg) return alert("Enter your weight");
+            if(weightMode === 'lb') weightKg = weightKg * 0.453592;
+            if(weightKg < 30 || weightKg > 250) return alert("Enter valid weight");
+
+            const bmi = (weightKg / Math.pow(heightCm / 100, 2)).toFixed(1);
+            showResults(bmi, heightCm);
+        }
+
+        function showResults(bmi, heightCm) {
+            const card = document.getElementById('resultCard');
+            const placeholder = document.getElementById('resultPlaceholder');
+            const content = document.getElementById('resultContent');
+            
+            placeholder.classList.add('hidden');
+            content.classList.remove('hidden');
+            card.classList.add('active');
+
+            document.getElementById('bmiVal').innerText = bmi;
+            
+            let cat = '', color = '', recs = [];
+            if(bmi < 18.5) {
+                cat = 'UNDERWEIGHT'; color = 'var(--warning)';
+                recs = [
+                    'Increase calorie intake with nutrient-dense foods',
+                    'Focus on strength training to build muscle mass',
+                    'Consult a nutritionist for a structured meal plan',
+                    'Ensure 8+ hours of sleep for muscle recovery',
+                    'Try our "Bulk" program at Health & Fitness Factory'
+                ];
+            } else if(bmi < 25) {
+                cat = 'NORMAL'; color = 'var(--success)';
+                recs = [
+                    'Maintain your balanced diet and regular exercise',
+                    'Focus on body composition (muscle vs fat ratio)',
+                    'Stay hydrated and keep up with your sleep schedule',
+                    'Mix strength and cardio for heart health',
+                    'Consider our "Maintenance" or "Lean Bulk" plans'
+                ];
+            } else if(bmi < 30) {
+                cat = 'OVERWEIGHT'; color = 'var(--warning)';
+                recs = [
+                    'Aim for a moderate calorie deficit (300-500 kcal/day)',
+                    'Combine high-intensity cardio with weight lifting',
+                    'Reduce processed sugars and increase fiber intake',
+                    'Track steps and aim for 8,000+ daily',
+                    'Try our "Weight Loss" or "Cut" training programs'
+                ];
+            } else {
+                cat = 'OBESE'; color = 'var(--error)';
+                recs = [
+                    'Consult a doctor before starting a new intense routine',
+                    'Focus on sustainable, long-term lifestyle changes',
+                    'Prioritize low-impact exercises like walking or swimming',
+                    'Focus on whole foods and portion control',
+                    'Personal Training is highly recommended for safety'
+                ];
+            }
+
+            const catEl = document.getElementById('bmiCat');
+            catEl.innerText = cat;
+            catEl.style.color = color;
+            catEl.style.borderColor = color;
+            catEl.style.background = color + '15';
+
+            // Ideal range
+            const minW = Math.round(18.5 * Math.pow(heightCm/100, 2));
+            const maxW = Math.round(24.9 * Math.pow(heightCm/100, 2));
+            document.getElementById('idealRange').innerText = `${minW} kg - ${maxW} kg`;
+
+            // Marker
+            const marker = document.getElementById('bmiMarker');
+            let pos = 0;
+            if(bmi < 18.5) pos = (bmi / 18.5) * 30;
+            else if(bmi < 25) pos = 30 + ((bmi - 18.5) / 6.5) * 25;
+            else if(bmi < 30) pos = 55 + ((bmi - 25) / 5) * 20;
+            else pos = 75 + Math.min((bmi - 30) / 10, 1) * 25;
+
+            marker.style.display = 'block';
+            marker.style.left = pos + '%';
+            document.getElementById('markerBmi').innerText = `YOUR BMI: ${bmi}`;
+
+            // Recommendations
+            const list = document.getElementById('recList');
+            list.innerHTML = '';
+            recs.forEach(r => {
+                list.innerHTML += `<li><span class="check-icon">✓</span> ${r}</li>`;
+            });
+
+            document.getElementById('scaleSection').classList.remove('hidden');
+            document.getElementById('recommendationSection').classList.remove('hidden');
+
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+</body>
+</html>

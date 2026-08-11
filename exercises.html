@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise Library | Health & Fitness Factory | Mehnagar</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Complete exercise library with animated demonstrations. Learn proper form for chest, back, legs, shoulders, arms, and abs at Health & Fitness Factory in Mehnagar.">
+    <meta name="keywords" content="exercises, workout, chest exercises, back exercises, leg exercises, gym Mehnagar, fitness guide">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="author" content="Harshit Barnwal">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --light-gray: #F5F5F5;
+            --gray-100: #E8E8E8;
+            --gray: #666666;
+            --dark-gray: #333333;
+            --black: #000000;
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --yellow-light: #FFF8DC;
+            --yellow-glow: rgba(255, 215, 0, 0.15);
+            --red: #EF4444;
+            --green: #22C55E;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--off-white); color: var(--dark-gray); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-100);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; z-index: 1000;
+        }
+        .back-link { font-weight: 500; font-size: 0.85rem; color: var(--gray); text-decoration: none; letter-spacing: 0.15em; transition: 0.3s; }
+        .back-link:hover { color: var(--black); }
+        .nav-brand { font-family: 'Bebas Neue'; line-height: 1; text-align: center; }
+        .brand-h { font-size: 1.1rem; color: var(--black); }
+        .brand-f { font-size: 1.1rem; color: var(--yellow); }
+        .nav-right { font-weight: 600; font-size: 0.7rem; color: var(--yellow-dark); letter-spacing: 0.25em; text-transform: uppercase; }
+
+        /* Header */
+        .main-container { max-width: 1180px; margin: 0 auto; padding: 100px 1.5rem 3rem; }
+        .page-header { text-align: center; margin-bottom: 3rem; }
+        .badge { background: var(--yellow-light); color: var(--yellow-dark); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.4em; padding: 4px 14px; display: inline-block; margin-bottom: 1rem; }
+        .title { font-family: 'Bebas Neue'; font-size: clamp(2.5rem, 6vw, 4rem); color: var(--black); letter-spacing: 0.03em; }
+        .line { width: 60px; height: 3px; background: var(--yellow); margin: 1rem auto; }
+        .subtitle { font-weight: 400; font-size: 1rem; color: var(--gray); line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+        /* Category Filter */
+        .filter-wrapper {
+            position: sticky; top: 60px; background: var(--white); z-index: 900;
+            border-bottom: 1px solid var(--gray-100); padding: 1rem 0; margin-bottom: 2rem;
+        }
+        .filter-scroll { display: flex; gap: 0.6rem; overflow-x: auto; padding: 0 1.5rem; -ms-overflow-style: none; scrollbar-width: none; }
+        .filter-scroll::-webkit-scrollbar { display: none; }
+        .category-btn {
+            background: var(--off-white); border: 2px solid var(--gray-100); padding: 8px 20px;
+            font-weight: 600; font-size: 0.8rem; color: var(--gray); cursor: pointer; transition: 0.3s;
+            white-space: nowrap; flex-shrink: 0; letter-spacing: 0.15em;
+        }
+        .category-btn.active { background: var(--black); border-color: var(--black); color: var(--yellow); }
+        .category-btn:hover:not(.active) { border-color: var(--yellow); color: var(--black); }
+
+        /* Exercises Grid */
+        .exercises-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+        .exercise-card {
+            background: var(--white); border: 1px solid var(--gray-100); padding: 1.5rem;
+            cursor: pointer; transition: 0.3s; position: relative;
+        }
+        .exercise-card:hover { border-color: var(--yellow); transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        
+        .cat-badge {
+            position: absolute; top: 1rem; right: 1rem; background: rgba(255, 215, 0, 0.15);
+            color: var(--yellow-dark); font-weight: 700; font-size: 0.65rem; letter-spacing: 0.15em;
+            padding: 3px 8px; text-transform: uppercase;
+        }
+        .ex-icon { font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+        .ex-name { font-family: 'Bebas Neue'; font-size: 1.3rem; color: var(--black); letter-spacing: 0.03em; margin-bottom: 0.3rem; }
+        .ex-muscle { font-weight: 500; font-size: 0.85rem; color: var(--gray); margin-bottom: 0.8rem; }
+        
+        .details-row { display: flex; gap: 1rem; margin-top: 1rem; font-weight: 500; font-size: 0.78rem; }
+        .diff { font-weight: 700; }
+        .diff.beginner { color: var(--green); }
+        .diff.intermediate { color: var(--warning); }
+        .diff.advanced { color: var(--red); }
+        .click-hint { margin-top: 0.8rem; font-size: 0.75rem; color: var(--yellow-dark); font-weight: 500; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+            z-index: 2000; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: 0.3s; padding: 1rem;
+        }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-box {
+            background: var(--white); max-width: 500px; width: 100%; max-height: 90vh;
+            overflow-y: auto; position: relative;
+        }
+        .modal-header {
+            padding: 1.5rem 2rem; border-bottom: 1px solid var(--gray-100);
+            position: sticky; top: 0; background: var(--white); z-index: 10;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-close { font-size: 1.5rem; color: var(--gray); cursor: pointer; border: none; background: none; }
+        .modal-close:hover { color: var(--red); }
+
+        /* Animation Area */
+        .animation-area { width: 100%; height: 220px; background: #111; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        
+        /* Stick Figure Styling */
+        .figure-container { position: relative; width: 100px; height: 100px; }
+        .head { width: 14px; height: 14px; border: 2px solid var(--yellow); border-radius: 50%; position: absolute; left: 43px; top: 10px; }
+        .torso { width: 2px; height: 35px; background: var(--yellow); position: absolute; left: 49px; top: 24px; }
+        .arm { width: 2px; height: 25px; background: var(--yellow); position: absolute; left: 49px; top: 26px; transform-origin: top center; }
+        .arm.left { transform: rotate(30deg); }
+        .arm.right { transform: rotate(-30deg); }
+        .leg { width: 2px; height: 30px; background: var(--yellow); position: absolute; left: 49px; top: 58px; transform-origin: top center; }
+        .leg.left { transform: rotate(15deg); }
+        .leg.right { transform: rotate(-15deg); }
+        .barbell { width: 70px; height: 3px; background: #888; position: absolute; left: 15px; top: 40px; border-radius: 2px; display: none; }
+        .barbell::before, .barbell::after { content: ''; width: 6px; height: 12px; background: #555; position: absolute; top: -5px; }
+        .barbell::before { left: 0; } .barbell::after { right: 0; }
+        
+        /* Modal Info */
+        .info-section { padding: 1.5rem 2rem; }
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+        .detail-box { background: var(--off-white); padding: 0.8rem; border-left: 3px solid var(--yellow); }
+        .detail-lbl { font-weight: 600; font-size: 0.7rem; color: var(--gray); letter-spacing: 0.2em; text-transform: uppercase; }
+        .detail-val { font-family: 'Orbitron'; font-weight: 700; color: var(--black); font-size: 1.1rem; margin-top: 0.2rem; }
+        
+        .form-tips-lbl { font-weight: 700; color: var(--yellow-dark); font-size: 0.75rem; letter-spacing: 0.25em; margin-bottom: 0.8rem; display: block; }
+        .tips-list { list-style: none; }
+        .tips-list li { font-size: 0.85rem; color: #444; line-height: 1.6; margin-bottom: 0.6rem; display: flex; gap: 10px; }
+        .tip-check { color: var(--yellow-dark); font-weight: 700; }
+
+        /* Animation Classes & Keyframes */
+        
+        /* 1. Bench Press */
+        .anim-bench-press .figure-container { transform: rotate(90deg) translateY(-20px); }
+        .anim-bench-press .barbell { display: block; top: 15px; animation: bp-bar 2s infinite ease-in-out; }
+        .anim-bench-press .arm { animation: bp-arms 2s infinite ease-in-out; }
+        @keyframes bp-bar { 0%, 100% { top: 15px; } 50% { top: -10px; } }
+        @keyframes bp-arms { 0%, 100% { height: 15px; } 50% { height: 35px; } }
+
+        /* 2. Squats */
+        .anim-squats .figure-container { animation: squat-body 2s infinite ease-in-out; }
+        .anim-squats .leg { animation: squat-legs 2s infinite ease-in-out; }
+        @keyframes squat-body { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(20px); } }
+        @keyframes squat-legs { 0%, 100% { height: 30px; } 50% { height: 15px; transform: rotate(40deg); } }
+
+        /* 3. Bicep Curl */
+        .anim-bicep-curl .arm { animation: curl-arms 2s infinite ease-in-out; height: 2px; width: 20px; top: 35px; }
+        @keyframes curl-arms { 0%, 100% { transform: rotate(90deg); } 50% { transform: rotate(-30deg); } }
+
+        /* 4. Pull Ups */
+        .anim-pull-ups .figure-container { animation: pull-body 2s infinite ease-in-out; }
+        .anim-pull-ups .arm { height: 30px; top: 5px; animation: pull-arms 2s infinite ease-in-out; }
+        @keyframes pull-body { 0%, 100% { transform: translateY(20px); } 50% { transform: translateY(0); } }
+        @keyframes pull-arms { 0%, 100% { height: 35px; } 50% { height: 15px; } }
+
+        /* 5. Deadlift */
+        .anim-deadlift .torso { transform-origin: bottom center; animation: dl-torso 2s infinite ease-in-out; }
+        .anim-deadlift .barbell { display: block; top: 60px; animation: dl-bar 2s infinite ease-in-out; }
+        @keyframes dl-torso { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(70deg); } }
+        @keyframes dl-bar { 0%, 100% { top: 60px; } 50% { top: 85px; } }
+
+        /* 6. Push Ups */
+        .anim-push-ups .figure-container { transform: rotate(70deg); animation: pu-body 2s infinite ease-in-out; }
+        @keyframes pu-body { 0%, 100% { left: 0; } 50% { left: 15px; } }
+
+        /* 7. Shoulder Press */
+        .anim-shoulder-press .arm { animation: sp-arms 2s infinite ease-in-out; }
+        @keyframes sp-arms { 0%, 100% { transform: rotate(150deg); } 50% { transform: rotate(30deg); } }
+
+        /* 8. Lat Pulldown */
+        .anim-lat-pulldown .arm { animation: lp-arms 2s infinite ease-in-out; }
+        .anim-lat-pulldown .barbell { display: block; top: 5px; animation: lp-bar 2s infinite ease-in-out; }
+        @keyframes lp-arms { 0%, 100% { transform: rotate(-150deg); } 50% { transform: rotate(-30deg); } }
+        @keyframes lp-bar { 0%, 100% { top: 5px; } 50% { top: 35px; } }
+
+        /* 9. Plank */
+        .anim-plank .figure-container { transform: rotate(90deg); top: 30px; }
+
+        /* 10. Jumping Jacks */
+        .anim-jumping-jacks .arm { animation: jj-arms 1s infinite ease-in-out; }
+        .anim-jumping-jacks .leg { animation: jj-legs 1s infinite ease-in-out; }
+        @keyframes jj-arms { 0%, 100% { transform: rotate(30deg); } 50% { transform: rotate(160deg); } }
+        @keyframes jj-legs { 0%, 100% { transform: rotate(15deg); } 50% { transform: rotate(45deg); } }
+
+        /* Simple Fallbacks for others */
+        .anim-generic .figure-container { animation: pulse-gen 2s infinite; }
+        @keyframes pulse-gen { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .exercises-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+        }
+        @media (max-width: 480px) {
+            .exercises-grid { grid-template-columns: 1fr; }
+            .modal-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="home.html" class="back-link">← BACK</a>
+        <div class="nav-brand">
+            <span class="brand-h">HEALTH & FITNESS</span>
+            <span class="brand-f">FACTORY</span>
+        </div>
+        <div class="nav-right">EXERCISES</div>
+    </nav>
+
+    <main class="main-container">
+        <header class="page-header">
+            <span class="badge">EXERCISE LIBRARY</span>
+            <h1 class="title">MASTER YOUR FORM</h1>
+            <div class="line"></div>
+            <p class="subtitle">Click any exercise to see animated demonstration and proper form instructions</p>
+        </header>
+
+        <div class="filter-wrapper">
+            <div class="filter-scroll">
+                <button class="category-btn active" data-category="all">ALL</button>
+                <button class="category-btn" data-category="chest">CHEST</button>
+                <button class="category-btn" data-category="back">BACK</button>
+                <button class="category-btn" data-category="shoulders">SHOULDERS</button>
+                <button class="category-btn" data-category="arms">ARMS</button>
+                <button class="category-btn" data-category="legs">LEGS</button>
+                <button class="category-btn" data-category="core">CORE</button>
+                <button class="category-btn" data-category="cardio">CARDIO</button>
+            </div>
+        </div>
+
+        <div class="exercises-grid" id="exercisesGrid">
+            <!-- Cards injected by JS -->
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div>
+                    <h2 class="ex-name" id="modalName" style="font-size: 1.6rem;">BENCH PRESS</h2>
+                    <p class="ex-muscle" id="modalMuscle">Chest</p>
+                </div>
+                <button class="modal-close" id="closeModal">✕</button>
+            </div>
+            
+            <div class="animation-area" id="animationArea">
+                <div class="figure-container">
+                    <div class="head"></div>
+                    <div class="torso"></div>
+                    <div class="arm left"></div>
+                    <div class="arm right"></div>
+                    <div class="leg left"></div>
+                    <div class="leg right"></div>
+                    <div class="barbell"></div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="modal-grid">
+                    <div class="detail-box">
+                        <p class="detail-lbl">Difficulty</p>
+                        <p class="detail-val" id="modalDifficulty">INTERMEDIATE</p>
+                    </div>
+                    <div class="detail-box">
+                        <p class="detail-lbl">Sets x Reps</p>
+                        <p class="detail-val" id="modalReps">4 x 10</p>
+                    </div>
+                    <div class="detail-box">
+                        <p class="detail-lbl">Category</p>
+                        <p class="detail-val" id="modalCategory">CHEST</p>
+                    </div>
+                    <div class="detail-box">
+                        <p class="detail-lbl">Target</p>
+                        <p class="detail-val" id="modalTarget">STRENGTH</p>
+                    </div>
+                </div>
+
+                <span class="form-tips-lbl">PROPER FORM</span>
+                <ul class="tips-list" id="modalTips">
+                    <!-- Tips injected by JS -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const exercises = [
+            { id: 'bench-press', name: 'BENCH PRESS', muscle: 'Chest', category: 'chest', icon: '💪', difficulty: 'intermediate', sets: 4, reps: 10, anim: 'bench-press', tips: ['Keep your feet flat on the ground', 'Lower the bar to your mid-chest slowly', 'Push through your palms, not fingertips', 'Keep your shoulder blades pinched back'] },
+            { id: 'push-ups', name: 'PUSH UPS', muscle: 'Chest', category: 'chest', icon: '💪', difficulty: 'beginner', sets: 3, reps: 15, anim: 'push-ups', tips: ['Maintain a straight line from head to heels', 'Lower until your chest nearly touches the floor', 'Keep elbows at a 45-degree angle', 'Engage your core throughout the movement'] },
+            { id: 'incline-press', name: 'INCLINE PRESS', muscle: 'Upper Chest', category: 'chest', icon: '💪', difficulty: 'intermediate', sets: 3, reps: 12, anim: 'bench-press', tips: ['Set bench to a 30-45 degree angle', 'Focus on the squeeze in your upper chest', 'Control the weight on the way down', 'Avoid bouncing the bar off your chest'] },
+            { id: 'pull-ups', name: 'PULL UPS', muscle: 'Back & Biceps', category: 'back', icon: '🏋️', difficulty: 'advanced', sets: 3, reps: 8, anim: 'pull-ups', tips: ['Grip slightly wider than shoulders', 'Pull your chest to the bar', 'Lower yourself with control', 'Avoid using momentum or swinging'] },
+            { id: 'lat-pulldown', name: 'LAT PULLDOWN', muscle: 'Lats', category: 'back', icon: '🏋️', difficulty: 'beginner', sets: 3, reps: 12, anim: 'lat-pulldown', tips: ['Pull the bar down to your upper chest', 'Squeeze your back muscles at the bottom', 'Don\'t lean back too far', 'Control the weight as it goes back up'] },
+            { id: 'rows', name: 'BARBELL ROWS', muscle: 'Middle Back', category: 'back', icon: '🏋️', difficulty: 'intermediate', sets: 4, reps: 10, anim: 'deadlift', tips: ['Keep your back flat, not rounded', 'Pull the bar towards your lower ribs', 'Squeeze your shoulder blades together', 'Maintain a slight bend in your knees'] },
+            { id: 'deadlift', name: 'DEADLIFT', muscle: 'Back & Legs', category: 'back', icon: '🏋️', difficulty: 'advanced', sets: 4, reps: 6, anim: 'deadlift', tips: ['Keep the bar close to your shins', 'Lift with your legs, not your lower back', 'Keep your chest up and back flat', 'Exhale as you reach the top of the lift'] },
+            { id: 'shoulder-press', name: 'SHOULDER PRESS', muscle: 'Shoulders', category: 'shoulders', icon: '💪', difficulty: 'intermediate', sets: 3, reps: 10, anim: 'shoulder-press', tips: ['Press the weights directly overhead', 'Don\'t arch your lower back', 'Keep your core tight for stability', 'Lower the weights to ear level'] },
+            { id: 'lateral-raise', name: 'LATERAL RAISES', muscle: 'Side Delts', category: 'shoulders', icon: '💪', difficulty: 'beginner', sets: 3, reps: 15, anim: 'generic', tips: ['Keep a slight bend in your elbows', 'Raise arms until they are parallel to floor', 'Avoid shrugging your shoulders', 'Control the movement; don\'t swing'] },
+            { id: 'face-pulls', name: 'FACE PULLS', muscle: 'Rear Delts', category: 'shoulders', icon: '💪', difficulty: 'beginner', sets: 3, reps: 15, anim: 'lat-pulldown', tips: ['Pull the rope towards your forehead', 'Pull the ends of the rope apart', 'Squeeze your rear delts at the back', 'Keep your elbows high'] },
+            { id: 'bicep-curl', name: 'BICEP CURLS', muscle: 'Biceps', category: 'arms', icon: '💪', difficulty: 'beginner', sets: 3, reps: 12, anim: 'bicep-curl', tips: ['Keep your elbows pinned to your sides', 'Avoid using your back to swing the weight', 'Squeeze your biceps at the top', 'Lower the weight fully for full range'] },
+            { id: 'tricep-pushdown', name: 'TRICEP PUSHDOWN', muscle: 'Triceps', category: 'arms', icon: '💪', difficulty: 'beginner', sets: 3, reps: 12, anim: 'lat-pulldown', tips: ['Keep elbows tucked into your ribs', 'Only move your forearms', 'Squeeze triceps hard at the bottom', 'Don\'t let the weight pull your shoulders up'] },
+            { id: 'hammer-curl', name: 'HAMMER CURLS', muscle: 'Biceps & Forearms', category: 'arms', icon: '💪', difficulty: 'beginner', sets: 3, reps: 12, anim: 'bicep-curl', tips: ['Use a neutral (palms-in) grip', 'Focus on the outer bicep and forearm', 'Keep your upper body still', 'Control the descent of the dumbbells'] },
+            { id: 'squats', name: 'SQUATS', muscle: 'Quads & Glutes', category: 'legs', icon: '🦵', difficulty: 'intermediate', sets: 4, reps: 10, anim: 'squats', tips: ['Keep your chest up and back straight', 'Squat until your thighs are parallel to floor', 'Keep your knees behind your toes', 'Push up through your heels'] },
+            { id: 'lunges', name: 'LUNGES', muscle: 'Legs', category: 'legs', icon: '🦵', difficulty: 'beginner', sets: 3, reps: 12, anim: 'squats', tips: ['Keep your front knee at a 90-degree angle', 'Don\'t let your back knee hit the floor hard', 'Keep your torso upright', 'Push back to start position with front heel'] },
+            { id: 'leg-press', name: 'LEG PRESS', muscle: 'Quads', category: 'legs', icon: '🦵', difficulty: 'beginner', sets: 3, reps: 12, anim: 'generic', tips: ['Don\'t lock your knees at the top', 'Keep your back flat against the seat', 'Lower the platform slowly', 'Place feet shoulder-width apart'] },
+            { id: 'calf-raises', name: 'CALF RAISES', muscle: 'Calves', category: 'legs', icon: '🦵', difficulty: 'beginner', sets: 3, reps: 20, anim: 'squats', tips: ['Go through the full range of motion', 'Pause at the top for a peak contraction', 'Lower your heels below the step level', 'Keep your core engaged for balance'] },
+            { id: 'crunches', name: 'CRUNCHES', muscle: 'Upper Abs', category: 'core', icon: '🔥', difficulty: 'beginner', sets: 3, reps: 20, anim: 'generic', tips: ['Lift your shoulders, not your neck', 'Exhale as you crunch upward', 'Keep your lower back on the floor', 'Perform the movement slowly'] },
+            { id: 'plank', name: 'PLANK', muscle: 'Core', category: 'core', icon: '🔥', difficulty: 'beginner', sets: 3, reps: '60 sec', anim: 'plank', tips: ['Keep your body in a straight line', 'Don\'t let your hips sag or peak', 'Engage your glutes and core', 'Breathe steadily'] },
+            { id: 'leg-raises', name: 'LEG RAISES', muscle: 'Lower Abs', category: 'core', icon: '🔥', difficulty: 'intermediate', sets: 3, reps: 15, anim: 'generic', tips: ['Keep your legs straight as possible', 'Don\'t let your heels touch the floor', 'Keep your lower back pressed down', 'Use your abs to lift your legs'] },
+            { id: 'russian-twist', name: 'RUSSIAN TWISTS', muscle: 'Obliques', category: 'core', icon: '🔥', difficulty: 'beginner', sets: 3, reps: 20, anim: 'generic', tips: ['Lean back slightly to engage abs', 'Rotate your torso, not just your arms', 'Keep your feet off the ground for challenge', 'Control the rotation'] },
+            { id: 'jumping-jacks', name: 'JUMPING JACKS', muscle: 'Full Body', category: 'cardio', icon: '🏃', difficulty: 'beginner', sets: 3, reps: '30 sec', anim: 'jumping-jacks', tips: ['Land softly on the balls of your feet', 'Keep a steady rhythm', 'Keep your core tight', 'Move your arms in a full arc'] },
+            { id: 'burpees', name: 'BURPEES', muscle: 'Full Body', category: 'cardio', icon: '🏃', difficulty: 'advanced', sets: 3, reps: 10, anim: 'generic', tips: ['Combine a squat, push-up, and jump', 'Maintain core tension during the plank', 'Land softly on your feet', 'Keep the movement fluid'] },
+            { id: 'mountain-climbers', name: 'MOUNTAIN CLIMBERS', muscle: 'Core & Cardio', category: 'cardio', icon: '🏃', difficulty: 'intermediate', sets: 3, reps: '30 sec', anim: 'generic', tips: ['Keep your back flat in plank position', 'Drive your knees towards your chest', 'Keep your shoulders over your wrists', 'Move as fast as you can with good form'] }
+        ];
+
+        function renderExercises() {
+            const grid = document.getElementById('exercisesGrid');
+            grid.innerHTML = '';
+            exercises.forEach(ex => {
+                const card = document.createElement('div');
+                card.className = 'exercise-card';
+                card.dataset.category = ex.category;
+                card.innerHTML = `
+                    <div class="cat-badge">${ex.category}</div>
+                    <span class="ex-icon">${ex.icon}</span>
+                    <h3 class="ex-name">${ex.name}</h3>
+                    <p class="ex-muscle">${ex.muscle}</p>
+                    <div class="details-row">
+                        <span class="diff ${ex.difficulty}">${ex.difficulty.toUpperCase()}</span>
+                        <span style="color:var(--gray)">${ex.sets} × ${ex.reps}</span>
+                    </div>
+                    <p class="click-hint">Click to view animation →</p>
+                `;
+                card.onclick = () => openModal(ex);
+                grid.appendChild(card);
+            });
+        }
+
+        function openModal(ex) {
+            document.getElementById('modalName').innerText = ex.name;
+            document.getElementById('modalMuscle').innerText = ex.muscle;
+            document.getElementById('modalReps').innerText = `${ex.sets} × ${ex.reps}`;
+            document.getElementById('modalCategory').innerText = ex.category.toUpperCase();
+            
+            const diffEl = document.getElementById('modalDifficulty');
+            diffEl.innerText = ex.difficulty.toUpperCase();
+            diffEl.className = 'detail-val ' + ex.difficulty;
+            
+            const tipsList = document.getElementById('modalTips');
+            tipsList.innerHTML = '';
+            ex.tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="tip-check">✓</span> ${tip}`;
+                tipsList.appendChild(li);
+            });
+
+            const animArea = document.getElementById('animationArea');
+            animArea.className = 'animation-area anim-' + ex.anim;
+
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('closeModal').onclick = closeModal;
+        document.getElementById('modalOverlay').onclick = (e) => {
+            if(e.target.id === 'modalOverlay') closeModal();
+        };
+
+        // Filter Logic
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const cat = btn.dataset.category;
+                
+                document.querySelectorAll('.exercise-card').forEach(card => {
+                    if(cat === 'all' || card.dataset.category === cat) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            };
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') closeModal();
+        });
+
+        renderExercises();
+    </script>
+</body>
+</html>

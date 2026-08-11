@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Health & Fitness Factory</title>
+    
+    <!-- Meta Tags -->
+    <meta name="theme-color" content="#FFD700">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    
+    <!-- Local Firebase Config -->
+    <script src="js/firebase-config.js"></script>
+
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --light-gray: #F5F5F5;
+            --gray-100: #E8E8E8;
+            --gray: #666666;
+            --dark-gray: #333333;
+            --black: #000000;
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --yellow-light: #FFF8DC;
+            --success: #22C55E;
+            --error: #EF4444;
+            --blue: #3B82F6;
+            --sidebar-width: 240px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--off-white); color: var(--dark-gray); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+
+        /* Loading Screen */
+        #loadingScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.4s ease;
+        }
+        .spinner { width: 40px; height: 40px; border: 3px solid #eee; border-top-color: var(--yellow); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Sidebar (Desktop) */
+        .sidebar {
+            position: fixed; left: 0; top: 0; width: var(--sidebar-width); height: 100vh;
+            background: var(--black); color: #fff; border-right: 1px solid rgba(255,215,0,0.1);
+            display: flex; flex-direction: column; z-index: 1000;
+        }
+        .sidebar-brand { padding: 1.5rem 1.2rem; border-bottom: 1px solid rgba(255,215,0,0.1); line-height: 1; }
+        .nav-links { flex: 1; padding: 1rem 0; }
+        .nav-link {
+            display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 1.2rem;
+            font-weight: 600; font-size: 0.9rem; color: rgba(255,255,255,0.6);
+            text-decoration: none; cursor: pointer; transition: 0.3s; border-left: 3px solid transparent;
+        }
+        .nav-link:hover { color: #fff; background: rgba(255,215,0,0.05); }
+        .nav-link.active { color: var(--yellow); background: rgba(255,215,0,0.08); border-left-color: var(--yellow); }
+
+        /* Mobile Nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 64px;
+            background: var(--black); border-top: 1px solid rgba(255,215,0,0.1);
+            display: none; justify-content: space-around; align-items: center; z-index: 1000;
+        }
+        .b-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.6rem; font-weight: 500; }
+        .b-nav-item.active { color: var(--yellow); }
+
+        /* Main */
+        .main-content { margin-left: var(--sidebar-width); padding: 1.5rem 2rem; min-height: 100vh; display: none; }
+
+        .welcome-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); margin-bottom: 2rem; }
+        
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: #fff; border: 1px solid var(--gray-100); padding: 1.5rem; position: relative; overflow: hidden; }
+        .stat-num { font-family: 'Orbitron'; font-weight: 700; font-size: 2rem; color: #000; margin: 10px 0 5px; }
+        .stat-lbl { font-size: 0.72rem; font-weight: 600; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        /* Members Table */
+        .card-container { background: #fff; border: 1px solid var(--gray-100); padding: 1.5rem; margin-bottom: 2rem; }
+        .table-wrap { width: 100%; overflow-x: auto; margin-top: 1rem; }
+        table { width: 100%; border-collapse: collapse; min-width: 650px; }
+        th { background: var(--light-gray); padding: 12px; text-align: left; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; border-bottom: 2px solid var(--gray-100); }
+        td { padding: 12px; border-bottom: 1px solid var(--gray-100); font-size: 0.85rem; }
+        .user-cell { display: flex; align-items: center; gap: 10px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--yellow); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; overflow: hidden; }
+
+        /* Badges */
+        .badge { padding: 4px 10px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; display: inline-block; }
+        .badge-success { background: rgba(34,197,94,0.1); color: var(--success); }
+        .badge-danger { background: rgba(239,68,68,0.1); color: var(--error); }
+
+        /* Messages */
+        .msg-card { background: #fff; border: 1px solid var(--gray-100); padding: 1.2rem; border-left: 4px solid var(--gray-100); margin-bottom: 1rem; position: relative; }
+        .msg-card.unread { border-left-color: var(--yellow); background: #FFFEF5; }
+        .btn-action { padding: 6px 12px; font-family: 'Rajdhani'; font-weight: 700; font-size: 0.7rem; cursor: pointer; border: 1px solid var(--gray-100); background: #fff; transition: 0.2s; }
+        .btn-action:hover { border-color: var(--yellow); background: var(--yellow-light); }
+
+        /* Forms */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--gray); margin-bottom: 5px; letter-spacing: 0.1em; }
+        .form-control { width: 100%; padding: 12px; border: 2px solid var(--gray-100); font-family: 'Rajdhani'; font-weight: 600; outline: none; }
+        .form-control:focus { border-color: var(--yellow); }
+        .btn-send { width: 100%; background: #000; color: var(--yellow); padding: 15px; border: none; font-weight: 700; font-family: 'Rajdhani'; letter-spacing: 0.2em; cursor: pointer; transition: 0.3s; }
+        .btn-send:hover { background: var(--yellow); color: #000; }
+
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 4px; color: #fff; font-weight: 600; display: none; z-index: 3000; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .bottom-nav { display: flex; }
+            .main-content { margin-left: 0; padding: 1rem 1rem 80px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="spinner"></div>
+        <p style="margin-top:10px; font-weight:600; letter-spacing:0.1em;">AUTHENTICATING ADMIN...</p>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <p style="font-weight:600; color:var(--yellow); font-size:0.7rem; letter-spacing:0.3em;">ADMIN PANEL</p>
+            <p style="font-family:'Bebas Neue'; font-size:1.2rem; color:#fff;">HEALTH & FITNESS <span style="color:var(--yellow)">FACTORY</span></p>
+        </div>
+        <nav class="nav-links">
+            <a href="#dashboard" class="nav-link active">📊 Dashboard</a>
+            <a href="#members" class="nav-link">👥 Members</a>
+            <a href="#messages" class="nav-link">💬 Messages</a>
+            <a href="#notifications" class="nav-link">🔔 Notifications</a>
+            <a href="#" class="nav-link" onclick="handleLogout()">← Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <a href="#dashboard" class="b-nav-item active"><span>📊</span><span>Dash</span></a>
+        <a href="#members" class="b-nav-item"><span>👥</span><span>Users</span></a>
+        <a href="#messages" class="b-nav-item"><span>💬</span><span>Msgs</span></a>
+        <a href="#notifications" class="b-nav-item"><span>🔔</span><span>Notify</span></a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="adminContent">
+        
+        <header class="welcome-bar" id="dashboard">
+            <div>
+                <p style="font-size:0.75rem; color:var(--gray); font-weight:600; letter-spacing:0.1em;">ADMIN ACCESS</p>
+                <h1 style="font-family:'Bebas Neue'; font-size:2.2rem; color:#000;">HARSHIT BARNWAL</h1>
+            </div>
+            <div style="text-align:right">
+                <p id="liveDate" style="font-weight:700; color:#000; font-size:0.9rem;"></p>
+                <p id="liveTime" style="color:var(--gray); font-size:0.75rem;"></p>
+            </div>
+        </header>
+
+        <!-- Stats Overview -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-lbl">Total Members</p>
+                <p class="stat-num" id="totalMembers">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-lbl">New This Week</p>
+                <p class="stat-num" id="newThisWeek">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-lbl">Fees Due</p>
+                <p class="stat-num" id="feesDueCount" style="color:var(--error)">0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-lbl">Unread Messages</p>
+                <p class="stat-num" id="unreadMessages" style="color:var(--blue)">0</p>
+            </div>
+        </section>
+
+        <!-- Members -->
+        <section id="members" class="card-container">
+            <h3 style="font-weight:700; letter-spacing:0.1em; font-size:0.9rem; margin-bottom:1rem;">GYM MEMBERS</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Member</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTable">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Messages -->
+        <section id="messages" class="card-container">
+            <h3 style="font-weight:700; letter-spacing:0.1em; font-size:0.9rem; margin-bottom:1rem;">CONTACT FORM MESSAGES</h3>
+            <div id="messagesList">
+                <!-- Dynamic Cards -->
+            </div>
+        </section>
+
+        <!-- Notifications -->
+        <section id="notifications" class="card-container">
+            <h3 style="font-weight:700; letter-spacing:0.1em; font-size:0.9rem; margin-bottom:1rem;">SEND ANNOUNCEMENT</h3>
+            <div class="form-group">
+                <label>NOTIFICATION TITLE</label>
+                <input type="text" id="notifTitle" class="form-control" placeholder="e.g. Gym Holiday Notice">
+            </div>
+            <div class="form-group">
+                <label>MESSAGE CONTENT</label>
+                <textarea id="notifBody" class="form-control" style="height:80px;"></textarea>
+            </div>
+            <button class="btn-send" onclick="broadcastNotification()">SEND TO ALL MEMBERS →</button>
+        </section>
+
+    </main>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // --- AUTH & INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing auth check...');
+            
+            // UI Clock
+            updateTime();
+            setInterval(updateTime, 60000);
+
+            // Wait for Firebase context
+            setTimeout(() => {
+                checkAuth();
+            }, 500);
+        });
+
+        async function checkAuth() {
+            try {
+                if (typeof firebase === 'undefined') {
+                    console.error('Firebase not loaded');
+                    alert('Critical: Firebase SDK missing. Refresh page.');
+                    hideLoading();
+                    return;
+                }
+                
+                const auth = firebase.auth();
+                const db = firebase.database();
+                
+                console.log('Firebase available. Checking currentUser...');
+                const user = auth.currentUser;
+                
+                if (user) {
+                    console.log('Immediate user found:', user.email);
+                    handleUser(user, db);
+                } else {
+                    console.log('No immediate user, listening for state change...');
+                    auth.onAuthStateChanged((user) => {
+                        if (!user) {
+                            console.log('No user session, redirecting to login');
+                            window.location.href = 'auth.html';
+                        } else {
+                            console.log('State changed: user logged in as', user.email);
+                            handleUser(user, db);
+                        }
+                    });
+                }
+            } catch(err) {
+                console.error('Auth check error:', err);
+                hideLoading();
+            }
+        }
+
+        async function handleUser(user, db) {
+            if (user.email !== 'bwon6697@gmail.com') {
+                console.warn('Unauthorized access attempt by', user.email);
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            
+            console.log('Admin identity verified. Loading panel content...');
+            try {
+                await loadAdminPanel(db);
+                console.log('Data loaded successfully.');
+            } catch(err) {
+                console.error('Data load failed:', err);
+            } finally {
+                hideLoading();
+                document.getElementById('adminContent').style.display = 'block';
+            }
+        }
+
+        // --- DATA LOADING ---
+        async function loadAdminPanel(db) {
+            // 1. Members
+            try {
+                db.ref('users').on('value', snap => {
+                    const users = snap.val() || {};
+                    const membersArray = Object.entries(users)
+                        .filter(([uid, u]) => u && u.email !== 'bwon6697@gmail.com')
+                        .map(([uid, u]) => ({uid, ...u}));
+                    
+                    document.getElementById('totalMembers').textContent = membersArray.length;
+                    document.getElementById('feesDueCount').textContent = membersArray.filter(m => m.feesDue).length;
+                    
+                    const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                    document.getElementById('newThisWeek').textContent = membersArray.filter(m => m.createdAt > weekAgo).length;
+
+                    renderMembers(membersArray);
+                });
+            } catch(e) { console.error('Member listener failed'); }
+
+            // 2. Messages
+            try {
+                db.ref('contactMessages').on('value', snap => {
+                    const msgs = snap.val() || {};
+                    const msgArray = Object.entries(msgs)
+                        .map(([id, m]) => ({id, ...m}))
+                        .sort((a,b) => b.timestamp - a.timestamp);
+                    
+                    document.getElementById('unreadMessages').textContent = msgArray.filter(m => m.status === 'unread').length;
+                    renderMessages(msgArray);
+                });
+            } catch(e) { console.error('Message listener failed'); }
+        }
+
+        // --- RENDERERS ---
+        function renderMembers(members) {
+            const tbody = document.getElementById('membersTable');
+            tbody.innerHTML = '';
+            
+            if(members.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:#999">No members found.</td></tr>';
+                return;
+            }
+
+            members.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar">${m.profilePic ? `<img src="${m.profilePic}" width="32">` : m.name.charAt(0)}</div>
+                            <div style="line-height:1.2">
+                                <p style="font-weight:700">${m.name}</p>
+                                <p style="font-size:0.7rem; color:#999">${m.email}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>📞 ${m.phone || 'N/A'}</td>
+                    <td><span class="badge ${m.feesDue ? 'badge-danger' : 'badge-success'}">${m.feesDue ? 'FEES DUE' : 'ACTIVE'}</span></td>
+                    <td>${m.signupDate || 'N/A'}</td>
+                    <td>
+                        <button class="btn-action" title="Toggle Fees" onclick="toggleFees('${m.uid}', ${m.feesDue})">💰</button>
+                        <button class="btn-action" style="color:var(--error)" onclick="deleteUser('${m.uid}')">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderMessages(msgs) {
+            const list = document.getElementById('messagesList');
+            list.innerHTML = '';
+
+            if(msgs.length === 0) {
+                list.innerHTML = '<p style="text-align:center; padding:2rem; color:#999">No messages yet.</p>';
+                return;
+            }
+
+            msgs.forEach(m => {
+                const div = document.createElement('div');
+                div.className = `msg-card ${m.status === 'unread' ? 'unread' : ''}`;
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <p style="font-weight:700">${m.name}</p>
+                        <p style="font-size:0.7rem; color:#999">${new Date(m.timestamp).toLocaleDateString()}</p>
+                    </div>
+                    <p style="font-size:0.75rem; font-weight:700; color:var(--yellow-dark); margin-bottom:5px;">${m.subject.toUpperCase()}</p>
+                    <p style="font-size:0.85rem; line-height:1.4;">${m.message}</p>
+                    <div style="margin-top:10px; display:flex; gap:8px;">
+                        <button class="btn-action" onclick="window.open('https://wa.me/91${m.phone}')">WHATSAPP</button>
+                        ${m.status === 'unread' ? `<button class="btn-action" onclick="markRead('${m.id}')">MARK READ</button>` : ''}
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        // --- ACTIONS ---
+        async function toggleFees(uid, current) {
+            await firebase.database().ref(`users/${uid}/feesDue`).set(!current);
+            showToast('User status updated');
+        }
+
+        async function markRead(id) {
+            await firebase.database().ref(`contactMessages/${id}/status`).set('read');
+        }
+
+        async function deleteUser(uid) {
+            if(confirm("Permanently delete this user from database?")) {
+                await firebase.database().ref(`users/${uid}`).remove();
+                showToast('User deleted');
+            }
+        }
+
+        async function broadcastNotification() {
+            const t = document.getElementById('notifTitle').value;
+            const b = document.getElementById('notifBody').value;
+            if(!t || !b) return alert("Fill all fields");
+
+            const snap = await firebase.database().ref('users').once('value');
+            const users = snap.val();
+            let count = 0;
+
+            Object.entries(users).forEach(([uid, u]) => {
+                if(u.email !== 'bwon6697@gmail.com') {
+                    firebase.database().ref(`users/${uid}/notifications`).push({
+                        title: t, message: b, timestamp: firebase.database.ServerValue.TIMESTAMP, read: false
+                    });
+                    count++;
+                }
+            });
+
+            showToast(`Broadcasted to ${count} members`);
+            document.getElementById('notifTitle').value = '';
+            document.getElementById('notifBody').value = '';
+        }
+
+        // --- HELPERS ---
+        function hideLoading() {
+            const el = document.getElementById('loadingScreen');
+            if(el) {
+                el.style.opacity = '0';
+                setTimeout(() => el.style.display = 'none', 400);
+            }
+        }
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('liveDate').innerText = now.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+            document.getElementById('liveTime').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function handleLogout() {
+            firebase.auth().signOut().then(() => window.location.href = 'home.html');
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast');
+            t.innerText = m; t.style.background = 'var(--black)';
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        // --- SAFETY NET ---
+        setTimeout(() => {
+            console.log('Safety check: Hiding loader after 8 seconds...');
+            hideLoading();
+            document.getElementById('adminContent').style.display = 'block';
+        }, 8000);
+    </script>
+</body>
+</html>

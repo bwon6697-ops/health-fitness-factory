@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membership Plans | Health & Fitness Factory | Mehnagar</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Affordable gym membership in Mehnagar. Monthly plan ₹700, 3-month plan ₹1800 with special discount. Join Health & Fitness Factory today.">
+    <meta name="keywords" content="gym membership Mehnagar, gym prices, fitness membership, Health Fitness Factory pricing, monthly gym plan">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="author" content="Harshit Barnwal">
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --light-gray: #F5F5F5;
+            --gray-100: #E8E8E8;
+            --gray: #666666;
+            --dark-gray: #333333;
+            --black: #000000;
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --yellow-light: #FFF8DC;
+            --yellow-glow: rgba(255, 215, 0, 0.15);
+            --success: #22C55E;
+            --red: #EF4444;
+        }
+
+        /* Global Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--white); color: var(--dark-gray); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-100);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; z-index: 1000;
+        }
+        .back-link { font-weight: 500; font-size: 0.85rem; color: var(--gray); text-decoration: none; letter-spacing: 0.15em; transition: 0.3s; }
+        .back-link:hover { color: var(--black); }
+        .nav-brand { font-family: 'Bebas Neue'; line-height: 1; text-align: center; text-decoration: none; }
+        .brand-h { font-size: 1.1rem; color: var(--black); }
+        .brand-f { font-size: 1.1rem; color: var(--yellow); }
+        .nav-right { font-weight: 600; font-size: 0.7rem; color: var(--yellow-dark); letter-spacing: 0.25em; text-transform: uppercase; }
+
+        /* Main Layout */
+        .main-container { max-width: 1180px; margin: 0 auto; padding: 100px 1.5rem 3rem; }
+
+        /* Header Section */
+        .header-section { text-align: center; margin-bottom: 3rem; }
+        .badge { background: var(--yellow-light); color: var(--yellow-dark); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.4em; padding: 4px 14px; display: inline-block; margin-bottom: 1rem; }
+        .title { font-family: 'Bebas Neue'; font-size: clamp(2.5rem, 6vw, 4rem); color: var(--black); letter-spacing: 0.03em; }
+        .line { width: 60px; height: 3px; background: var(--yellow); margin: 1rem auto; }
+        .subtitle { font-weight: 500; font-size: 1.1rem; color: var(--gray); line-height: 1.7; max-width: 500px; margin: 0 auto; }
+        .location-tag { font-weight: 500; font-size: 0.85rem; color: var(--gray-100); letter-spacing: 0.15em; margin-top: 0.5rem; color: #999; }
+
+        /* Pricing Cards */
+        .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; max-width: 800px; margin: 0 auto 4rem; padding: 0 1rem; }
+        .price-card {
+            background: var(--white); border: 2px solid var(--gray-100);
+            padding: 2.5rem 2rem; text-align: center; position: relative; transition: 0.3s;
+        }
+        .price-card:hover { border-color: var(--yellow); transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+        .price-card.featured { border: 3px solid var(--yellow); box-shadow: 0 8px 40px rgba(255, 215, 0, 0.15); }
+        
+        .best-value {
+            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+            background: var(--yellow); color: var(--black); font-weight: 700; font-size: 0.75rem;
+            letter-spacing: 0.25em; padding: 6px 20px; white-space: nowrap;
+        }
+        .plan-name { font-weight: 700; color: var(--gray); font-size: 0.85rem; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 1rem; }
+        .plan-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        
+        .price-display { margin-bottom: 0.5rem; }
+        .curr { font-weight: 400; font-size: 1.3rem; color: var(--black); vertical-align: top; }
+        .amt { font-family: 'Orbitron'; font-size: 3.5rem; color: var(--black); }
+        .dur { font-size: 0.9rem; color: var(--gray); }
+        
+        .save-banner { font-weight: 700; color: var(--success); font-size: 0.85rem; margin-top: 0.3rem; }
+        .old-price { text-decoration: line-through; color: #999; font-weight: 500; font-size: 0.9rem; }
+        
+        .features-list { list-style: none; text-align: left; margin: 2rem 0; }
+        .features-list li { display: flex; align-items: center; gap: 0.75rem; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--dark-gray); }
+        .check { color: var(--yellow); font-weight: 700; }
+
+        .btn-choose {
+            display: block; width: 100%; padding: 15px; border: 2px solid var(--black);
+            font-weight: 700; font-size: 0.85rem; letter-spacing: 0.25em; text-decoration: none;
+            color: var(--black); transition: 0.3s;
+        }
+        .btn-choose:hover { background: var(--black); color: var(--yellow); }
+        .btn-featured { background: var(--yellow); border-color: var(--yellow); }
+
+        /* Comparison Section */
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1000px; margin: 2rem auto 4rem; }
+        .feat-card { background: var(--white); border: 1px solid var(--gray-100); padding: 2rem 1.5rem; text-align: center; transition: 0.3s; }
+        .feat-card:hover { border-color: var(--yellow); transform: translateY(-3px); }
+        .feat-icon { width: 60px; height: 60px; background: var(--yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem; }
+        .feat-card h3 { font-weight: 700; font-size: 1rem; letter-spacing: 0.15em; margin-bottom: 0.5rem; color: var(--black); }
+        .feat-card p { font-size: 0.9rem; color: var(--gray); line-height: 1.7; }
+
+        /* Timings Section */
+        .timings-box { background: var(--black); color: var(--white); padding: 4rem 2rem; text-align: center; margin-bottom: 4rem; }
+        .timings-row { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; }
+        .time-card { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.2); padding: 2.5rem 3rem; min-width: 250px; }
+        .time-card .label { color: var(--yellow); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.3em; display: block; margin-bottom: 0.5rem; }
+        .time-card .val { font-family: 'Orbitron'; font-size: 1.4rem; }
+        .closed-note { color: rgba(255,255,255,0.5); margin-top: 1.5rem; display: block; font-weight: 500; }
+
+        /* FAQ Section */
+        .faq-container { max-width: 700px; margin: 2rem auto 4rem; }
+        .faq-item { border: 1px solid var(--gray-100); margin-bottom: 0.8rem; overflow: hidden; }
+        .faq-question { padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; color: var(--dark-gray); }
+        .faq-icon { font-size: 1.3rem; color: var(--yellow); transition: 0.3s; }
+        .faq-answer { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: 0.3s ease-out; font-size: 0.9rem; color: var(--gray); line-height: 1.7; }
+        .faq-item.open { border-color: var(--yellow); }
+        .faq-item.open .faq-answer { padding-bottom: 1.2rem; max-height: 200px; }
+
+        /* Steps Section */
+        .steps-bg { background: var(--off-white); padding: 4rem 2rem; margin-bottom: 4rem; }
+        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 900px; margin: 2rem auto 0; text-align: center; }
+        .step-num { font-family: 'Bebas Neue'; font-size: 4rem; color: var(--yellow); line-height: 1; }
+        .step-title { font-weight: 700; font-size: 1rem; margin: 0.5rem 0; letter-spacing: 0.15em; color: var(--black); }
+        .step-desc { font-size: 0.9rem; color: var(--gray); line-height: 1.7; }
+
+        /* Contact CTA */
+        .contact-cta { background: var(--black); color: var(--white); padding: 4rem 2rem; text-align: center; margin-bottom: 4rem; }
+        .contact-grid { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; }
+        .contact-btn {
+            display: flex; align-items: center; gap: 0.6rem; padding: 12px 24px;
+            background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3);
+            color: var(--yellow); text-decoration: none; font-weight: 600; transition: 0.3s;
+        }
+        .contact-btn:hover { background: rgba(255,215,0,0.2); border-color: var(--yellow); transform: translateY(-2px); }
+        .address-box { margin-top: 2rem; font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.8; }
+
+        /* Final CTA */
+        .final-cta { text-align: center; padding: 2rem 1.5rem 5rem; }
+        .btn-join-now {
+            display: inline-block; background: var(--yellow); color: var(--black);
+            padding: 18px 60px; font-weight: 700; letter-spacing: 0.25em;
+            text-decoration: none; transition: 0.3s; border: 2px solid var(--yellow);
+            animation: pulseGlow 2s infinite;
+        }
+        .btn-join-now:hover { background: var(--black); color: var(--yellow); }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        /* Utilities */
+        .reveal { opacity: 0; transform: translateY(20px); transition: 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .pricing-grid, .features-grid, .steps-grid { grid-template-columns: 1fr; }
+            .nav-right { display: none; }
+            .main-container { padding-top: 80px; }
+            .price-card.featured { transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="home.html" class="back-link">← BACK</a>
+        <a href="home.html" class="nav-brand">
+            <span class="brand-h">HEALTH & FITNESS</span>
+            <span class="brand-f">FACTORY</span>
+        </a>
+        <div class="nav-right">MEMBERSHIP</div>
+    </nav>
+
+    <main class="main-container">
+        
+        <header class="header-section">
+            <span class="badge reveal">MEMBERSHIP PLANS</span>
+            <h1 class="title reveal">CHOOSE YOUR PLAN</h1>
+            <div class="line reveal"></div>
+            <p class="subtitle reveal">Simple pricing. No hidden fees. Just results.</p>
+            <p class="location-tag reveal">Located in Mehnagar • Since 2023</p>
+        </header>
+
+        <!-- PRICING -->
+        <section class="pricing-grid">
+            <!-- Monthly -->
+            <div class="price-card reveal">
+                <span class="plan-name">Monthly</span>
+                <span class="plan-icon">📅</span>
+                <div class="price-display">
+                    <span class="curr">₹</span>
+                    <span class="amt">700</span>
+                    <span class="dur">/month</span>
+                </div>
+                <p style="font-size:0.85rem; color:#666;">Perfect for beginners</p>
+                <div style="width:100%; height:1px; background:#EEE; margin:1.5rem 0;"></div>
+                <ul class="features-list">
+                    <li><span class="check">✓</span> Full gym access</li>
+                    <li><span class="check">✓</span> All equipment usage</li>
+                    <li><span class="check">✓</span> Basic workout guidance</li>
+                    <li><span class="check">✓</span> Locker room access</li>
+                    <li><span class="check">✓</span> Fitness assessment</li>
+                    <li><span class="check">✓</span> 6 days access</li>
+                </ul>
+                <a href="auth.html" class="btn-choose">CHOOSE MONTHLY</a>
+            </div>
+
+            <!-- 3 Months -->
+            <div class="price-card featured reveal">
+                <div class="best-value">BEST VALUE</div>
+                <span class="plan-name" style="color:var(--yellow-dark)">3 Months</span>
+                <span class="plan-icon">🎯</span>
+                <div class="price-display">
+                    <span class="curr">₹</span>
+                    <span class="amt">1,800</span>
+                </div>
+                <p class="old-price">₹2,100</p>
+                <p class="save-banner">You save ₹300</p>
+                <div style="width:100%; height:1px; background:#EEE; margin:1.5rem 0;"></div>
+                <ul class="features-list">
+                    <li><span class="check">✓</span> Everything in Monthly</li>
+                    <li><span class="check">✓</span> Save ₹300 overall</li>
+                    <li><span class="check">✓</span> Priority booking</li>
+                    <li><span class="check">✓</span> Free supplement advice</li>
+                    <li><span class="check">✓</span> Free fitness plan</li>
+                    <li><span class="check">✓</span> 3 months validity</li>
+                </ul>
+                <a href="auth.html" class="btn-choose btn-featured">CHOOSE 3 MONTHS</a>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <h2 class="title reveal centered" style="text-align:center; font-size: 2.5rem;">WHAT'S INCLUDED</h2>
+        <div class="line centered reveal" style="margin: 1rem auto 3rem;"></div>
+        
+        <section class="features-grid">
+            <div class="feat-card reveal">
+                <div class="feat-icon">🏋️</div>
+                <h3>EXPERT TRAINERS</h3>
+                <p>Certified professionals to guide your journey and correct form.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">⚡</div>
+                <h3>MODERN EQUIPMENT</h3>
+                <p>Top quality machines and heavy free weights for all levels.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">🎯</div>
+                <h3>PERSONALIZED PLAN</h3>
+                <p>Custom workouts designed specifically for your body goals.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">🍎</div>
+                <h3>DIET GUIDANCE</h3>
+                <p>Expert advice on nutrition, macros, and proper supplementation.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">📊</div>
+                <h3>PROGRESS STATS</h3>
+                <p>Monitor your muscle gains and fat loss with our tracking tools.</p>
+            </div>
+            <div class="feat-card reveal">
+                <div class="feat-icon">🚿</div>
+                <h3>CLEAN FACILITY</h3>
+                <p>Well-maintained locker rooms and sanitized workout areas.</p>
+            </div>
+        </section>
+
+        <!-- TIMINGS -->
+        <section class="timings-box reveal">
+            <span class="badge" style="background:rgba(255,215,0,0.1)">WORKOUT TIMINGS</span>
+            <h2 class="title" style="color:white; margin:1rem 0;">OPEN 6 DAYS</h2>
+            <div class="line" style="margin: 1rem auto;"></div>
+            
+            <div class="timings-row">
+                <div class="time-card">
+                    <span class="label">MORNING SESSION</span>
+                    <span class="val">4:00 AM - 9:00 AM</span>
+                </div>
+                <div class="time-card">
+                    <span class="label">EVENING SESSION</span>
+                    <span class="val">5:00 PM - 10:00 PM</span>
+                </div>
+            </div>
+            <span class="closed-note">Sunday Closed</span>
+        </section>
+
+        <!-- HOW TO JOIN -->
+        <h2 class="title reveal" style="text-align:center; font-size: 2.5rem;">HOW TO JOIN</h2>
+        <div class="line reveal" style="margin: 1rem auto 2rem;"></div>
+        
+        <section class="steps-bg reveal">
+            <div class="steps-grid">
+                <div>
+                    <div class="step-num">1</div>
+                    <h3 class="step-title">SIGN UP</h3>
+                    <p class="step-desc">Create your account online in 2 minutes with basic details.</p>
+                </div>
+                <div>
+                    <div class="step-num">2</div>
+                    <h3 class="step-title">CHOOSE PLAN</h3>
+                    <p class="step-desc">Select the plan that fits your goals and budget.</p>
+                </div>
+                <div>
+                    <div class="step-num">3</div>
+                    <h3 class="step-title">START TRAINING</h3>
+                    <p class="step-desc">Visit us in Mehnagar and start your transformation journey.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <h2 class="title reveal" style="text-align:center; font-size: 2.5rem;">COMMON QUESTIONS</h2>
+        <div class="line reveal" style="margin: 1rem auto 2rem;"></div>
+        
+        <section class="faq-container">
+            <div class="faq-item reveal">
+                <div class="faq-question">How do I join? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Simply visit our gym at Mehnagar or click "Choose Plan" to sign up online. Fill in your details and become a member instantly.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question">What are the payment methods? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">We accept Cash, UPI, and Bank Transfers. You can pay directly at the gym reception.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question">Can I get a trial session? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Yes! We offer a one-day trial session for newcomers. Contact us to schedule yours.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question">Is there any joining fee? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">No. We have zero hidden joining fees. You only pay for the membership duration you choose.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question">What should I bring? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Please bring comfortable workout clothes, sports shoes, a water bottle, and a small towel.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question">Can I cancel my membership? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Yes, you can stop anytime. However, please note that membership fees are non-refundable.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question">Do you have personal trainers? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">Yes, we have certified trainers on floor at all times. Specialized 1-on-1 personal training is also available.</div>
+            </div>
+            <div class="faq-item reveal">
+                <div class="faq-question">What is the age limit? <span class="faq-icon">+</span></div>
+                <div class="faq-answer">We welcome everyone aged 14 and above. Members under 18 require parental consent.</div>
+            </div>
+        </section>
+
+        <!-- CONTACT -->
+        <section class="contact-cta reveal">
+            <span class="badge" style="background:rgba(255,215,0,0.1)">STILL HAVE QUESTIONS?</span>
+            <h2 class="title" style="color:white; margin:1rem 0;">TALK TO US</h2>
+            <p class="subtitle" style="color:rgba(255,255,255,0.7)">We're here to help you start your fitness journey.</p>
+            
+            <div class="contact-grid">
+                <a href="tel:+917518141919" class="contact-btn">📞 CALL: +91 75181 41919</a>
+                <a href="https://wa.me/917518141919" class="contact-btn">💬 WHATSAPP</a>
+                <a href="mailto:harshitbarnwal6@gmail.com" class="contact-btn">📧 EMAIL US</a>
+            </div>
+
+            <div class="address-box">
+                <p>Health & Fitness Factory</p>
+                <p>Near Petrol Pump, Mehnagar</p>
+                <p>Uttar Pradesh, India</p>
+            </div>
+        </section>
+
+        <!-- FINAL CTA -->
+        <div class="final-cta reveal">
+            <h2 class="title">READY TO BEGIN?</h2>
+            <p class="title" style="color:var(--yellow); font-size:1.5rem; margin-bottom:2rem;">YOUR TRANSFORMATION AWAITS</p>
+            <a href="auth.html" class="btn-join-now">JOIN NOW</a>
+            <p style="margin-top:1.5rem; font-size:0.8rem; color:#999;">No commitment • Cancel anytime</p>
+        </div>
+
+    </main>
+
+    <script>
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.onclick = () => {
+                const item = q.parentElement;
+                const isOpen = item.classList.contains('open');
+                
+                // Close all others
+                document.querySelectorAll('.faq-item').forEach(el => {
+                    el.classList.remove('open');
+                    el.querySelector('.faq-icon').innerText = '+';
+                });
+
+                if (!isOpen) {
+                    item.classList.add('open');
+                    q.querySelector('.faq-icon').innerText = '✕';
+                }
+            };
+        });
+
+        // Scroll Reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

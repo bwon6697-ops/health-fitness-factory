@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Health & Fitness Factory</title>
+    
+    <!-- Meta Tags -->
+    <meta name="theme-color" content="#FFD700">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="js/firebase-config.js"></script>
+
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --light-gray: #F5F5F5;
+            --gray-100: #E8E8E8;
+            --gray: #666666;
+            --dark-gray: #333333;
+            --black: #000000;
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --yellow-light: #FFF8DC;
+            --success: #22C55E;
+            --error: #EF4444;
+            --warning: #F59E0B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--off-white); color: var(--dark-gray); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+
+        /* Loading Screen */
+        #loadingScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: 0.3s;
+        }
+        .spinner { width: 30px; height: 30px; border: 3px solid #eee; border-top-color: var(--yellow); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-100); z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem;
+        }
+        .back-link { font-weight: 500; font-size: 0.85rem; color: var(--gray); text-decoration: none; letter-spacing: 0.15em; }
+        .nav-brand { font-family: 'Bebas Neue'; line-height: 1; text-align: center; }
+        .nav-brand span:first-child { color: #000; }
+        .nav-brand span:last-child { color: var(--yellow); }
+
+        .main-container { max-width: 900px; margin: 80px auto 3rem; padding: 0 1.5rem; }
+
+        /* Header Section */
+        .profile-card { background: var(--white); border: 1px solid var(--gray-100); padding: 2rem; margin-bottom: 2rem; }
+        .profile-header { background: linear-gradient(to bottom, var(--yellow-light), #fff); text-align: center; padding: 2.5rem 1.5rem; position: relative; border: 1px solid var(--gray-100); margin-bottom: 2rem; }
+        
+        .pfp-container { position: relative; width: 120px; height: 120px; margin: 0 auto 1rem; cursor: pointer; }
+        .pfp { width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--yellow); display: flex; align-items: center; justify-content: center; background: var(--yellow); color: #000; font-size: 3rem; font-weight: 700; overflow: hidden; background-size: cover; background-position: center; }
+        .cam-icon { position: absolute; bottom: 5px; right: 5px; width: 32px; height: 32px; background: #000; color: var(--yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid #fff; font-size: 0.8rem; transition: 0.3s; }
+        .cam-icon:hover { transform: scale(1.1); }
+
+        /* Quick Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: #fff; border: 1px solid var(--gray-100); padding: 1.2rem; text-align: center; transition: 0.3s; }
+        .stat-card:hover { border-color: var(--yellow); transform: translateY(-3px); }
+        .stat-num { font-family: 'Orbitron'; font-weight: 700; font-size: 1.4rem; color: #000; margin: 5px 0; }
+        .stat-lbl { font-size: 0.72rem; color: var(--gray); letter-spacing: 0.15em; font-weight: 600; text-transform: uppercase; }
+
+        /* Info Form */
+        .form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .input-group { margin-bottom: 1rem; }
+        .label { display: block; font-size: 0.7rem; font-weight: 600; color: var(--gray); letter-spacing: 0.2em; margin-bottom: 0.3rem; }
+        .profile-input { width: 100%; padding: 10px; font-family: 'Rajdhani'; font-size: 1rem; color: #000; border: 2px solid transparent; background: transparent; transition: 0.3s; }
+        .profile-input:not([readonly]) { background: var(--off-white); border-color: var(--gray-100); }
+        .profile-input:focus { border-color: var(--yellow); outline: none; }
+
+        /* Status Section */
+        .status-box { background: rgba(34, 197, 94, 0.1); color: var(--success); border: 1px solid var(--success); padding: 8px 16px; font-weight: 700; display: inline-block; font-size: 0.85rem; letter-spacing: 0.1em; }
+        .status-box.due { background: rgba(239, 68, 68, 0.1); color: var(--error); border-color: var(--error); }
+        .alert-bar { background: rgba(239, 68, 68, 0.05); border-left: 4px solid var(--error); padding: 1rem; margin-top: 1.5rem; display: none; }
+
+        /* Buttons */
+        .btn-primary { background: #000; color: var(--yellow); border: 2px solid #000; padding: 12px 25px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Rajdhani'; letter-spacing: 0.1em; }
+        .btn-primary:hover { background: var(--yellow); color: #000; }
+        .btn-outline-red { background: transparent; border: 2px solid var(--error); color: var(--error); padding: 12px 25px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Rajdhani'; }
+        .btn-outline-red:hover { background: var(--error); color: #fff; }
+
+        /* Modal */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 1rem; }
+        .modal.show { display: flex; }
+        .modal-box { background: #fff; max-width: 500px; width: 100%; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; cursor: pointer; font-size: 1.5rem; color: #666; border: none; background: none; }
+
+        .tab-box { display: flex; background: var(--light-gray); padding: 4px; margin-bottom: 1.5rem; }
+        .tab-btn { flex: 1; border: none; padding: 10px; font-weight: 700; cursor: pointer; background: transparent; color: var(--gray); font-family: 'Rajdhani'; transition: 0.3s; }
+        .tab-btn.active { background: var(--yellow); color: #000; }
+
+        .upload-area { border: 2px dashed var(--gray-100); padding: 3rem 1rem; text-align: center; cursor: pointer; transition: 0.3s; }
+        .upload-area:hover { border-color: var(--yellow); background: var(--yellow-light); }
+
+        .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
+        .avatar-opt { width: 100%; aspect-ratio: 1; border: 2px solid var(--gray-100); border-radius: 50%; cursor: pointer; transition: 0.3s; }
+        .avatar-opt.selected { border-color: var(--yellow); border-width: 4px; }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 4px; color: #fff; font-weight: 600; display: none; z-index: 3000; animation: slideUp 0.3s forwards; }
+        @keyframes slideUp { from { bottom: 0; opacity: 0; } to { bottom: 20px; opacity: 1; } }
+
+        @media (max-width: 768px) { .stats-grid { grid-template-columns: 1fr 1fr; } .info-grid { grid-template-columns: 1fr; } .avatar-grid { grid-template-columns: repeat(3, 1fr); } }
+    </style>
+</head>
+<body>
+
+    <div id="loadingScreen"><div class="spinner"></div><p style="margin-top:10px; font-weight:600;">LOADING PROFILE...</p></div>
+
+    <nav class="navbar">
+        <a href="dashboard.html" class="back-link">← DASHBOARD</a>
+        <div class="nav-brand"><span>HEALTH & FITNESS</span> <span>FACTORY</span></div>
+        <div style="font-weight:700; font-size:0.7rem; letter-spacing:0.2em; color:var(--yellow-dark)">MY PROFILE</div>
+    </nav>
+
+    <main class="main-container">
+
+        <!-- Section 1: Header -->
+        <section class="profile-header">
+            <div class="pfp-container" id="openPicModal">
+                <div id="pfpDisplay" class="pfp">?</div>
+                <div class="cam-icon" id="cameraIcon">📷</div>
+            </div>
+            <h1 id="headerName" style="font-family:'Bebas Neue'; font-size:2.2rem; line-height:1;">...</h1>
+            <p id="headerEmail" style="color:var(--gray); font-weight:500; font-size:0.95rem; margin-top:5px;">...</p>
+            <p id="memberSince" style="color:var(--yellow-dark); font-weight:600; font-size:0.8rem; letter-spacing:0.1em; margin-top:10px;">🏋️ MEMBER SINCE ...</p>
+        </section>
+
+        <!-- Section 2: Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-lbl">📏 Height</p>
+                <p class="stat-num"><span id="statHeight">0</span><span style="font-size:0.7rem; color:var(--gray)">cm</span></p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-lbl">⚖️ Weight</p>
+                <p class="stat-num"><span id="statWeight">0</span><span style="font-size:0.7rem; color:var(--gray)">kg</span></p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-lbl">📊 BMI</p>
+                <p class="stat-num" id="statBMI">0.0</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-lbl">🎯 Goal</p>
+                <p class="stat-num" id="statGoal" style="font-size:0.85rem; padding-top:5px;">...</p>
+            </div>
+        </div>
+
+        <!-- Section 3: Info -->
+        <div class="profile-card">
+            <div class="form-header">
+                <h3 style="font-weight:700; letter-spacing:0.1em; font-size:0.9rem;">PERSONAL INFORMATION</h3>
+                <button type="button" class="btn-primary" id="editBtn" style="padding: 6px 15px; font-size: 0.75rem;">EDIT</button>
+            </div>
+            <div style="height:1px; background:var(--gray-100); margin-bottom:1.5rem;"></div>
+            
+            <div class="info-grid">
+                <div class="input-group">
+                    <label class="label">FULL NAME</label>
+                    <input type="text" id="inpName" class="profile-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label class="label">EMAIL ADDRESS</label>
+                    <input type="text" id="inpEmail" class="profile-input" readonly style="color:var(--gray)">
+                </div>
+                <div class="input-group">
+                    <label class="label">PHONE NUMBER</label>
+                    <input type="tel" id="inpPhone" class="profile-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label class="label">AGE</label>
+                    <input type="number" id="inpAge" class="profile-input" readonly>
+                </div>
+                <div class="input-group">
+                    <label class="label">GENDER</label>
+                    <select id="inpGender" class="profile-input" disabled>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="label">FITNESS GOAL</label>
+                    <select id="inpGoal" class="profile-input" disabled>
+                        <option value="bulk">Bulk</option>
+                        <option value="lean_bulk">Lean Bulk</option>
+                        <option value="cut">Cut</option>
+                        <option value="maintain">Maintain</option>
+                        <option value="recomp">Recomposition</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Membership -->
+        <div class="profile-card">
+            <h3 style="font-weight:700; letter-spacing:0.1em; font-size:0.9rem; margin-bottom:1.5rem;">MEMBERSHIP STATUS</h3>
+            <div class="info-grid" style="align-items:center;">
+                <div>
+                    <label class="label">STATUS</label>
+                    <div id="statusBadge" class="status-box">● LOADING...</div>
+                </div>
+                <div>
+                    <label class="label">RENEWAL DATE</label>
+                    <p id="expiryDate" style="font-family:'Bebas Neue'; font-size:1.5rem; color:#000;">TBD</p>
+                </div>
+            </div>
+            <div id="feesAlert" class="alert-bar">
+                <p style="font-weight:600; font-size:0.9rem; color:var(--error);">⚠️ Your fees are due. Please contact the owner to renew.</p>
+                <a href="contact.html" class="btn-primary" style="display:inline-block; margin-top:10px; background:var(--error); border-color:var(--error); font-size:0.75rem; padding:8px 15px;">CONTACT OWNER</a>
+            </div>
+        </div>
+
+        <!-- Section 5: Password -->
+        <div class="profile-card">
+            <h3 style="font-weight:700; letter-spacing:0.1em; font-size:0.9rem; margin-bottom:1.5rem;">CHANGE PASSWORD</h3>
+            <div class="input-group">
+                <label class="label">CURRENT PASSWORD</label>
+                <div style="position:relative">
+                    <input type="password" id="curPass" class="profile-input" style="background:var(--off-white); border:2px solid var(--gray-100); padding:12px;">
+                    <span class="pass-toggle" style="position:absolute; right:12px; top:12px; font-size:0.7rem; font-weight:700; cursor:pointer;">SHOW</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label class="label">NEW PASSWORD</label>
+                <div style="position:relative">
+                    <input type="password" id="newPass" class="profile-input" style="background:var(--off-white); border:2px solid var(--gray-100); padding:12px;">
+                    <span class="pass-toggle" style="position:absolute; right:12px; top:12px; font-size:0.7rem; font-weight:700; cursor:pointer;">SHOW</span>
+                </div>
+            </div>
+            <button type="button" class="btn-primary" id="savePassBtn">UPDATE PASSWORD</button>
+        </div>
+
+        <!-- Section 6: Danger -->
+        <div class="profile-card" style="background:rgba(239,68,68,0.03); border-color:rgba(239,68,68,0.1); border-left:4px solid var(--error);">
+            <h3 style="font-weight:700; color:var(--error); font-size:0.9rem;">DANGER ZONE</h3>
+            <p style="font-size:0.85rem; color:var(--gray); margin-top:5px; margin-bottom:1.5rem;">These actions are permanent. Logout or delete your account data below.</p>
+            <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                <button type="button" class="btn-outline-red" onclick="handleLogout()">LOG OUT</button>
+                <button type="button" class="btn-outline-red" onclick="openDeleteModal()">DELETE ACCOUNT</button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL: PIC -->
+    <div class="modal" id="picModal">
+        <div class="modal-box">
+            <button class="modal-close">✕</button>
+            <h2 style="font-family:'Bebas Neue'; font-size:1.5rem; margin-bottom:1.5rem;">CHANGE PROFILE PICTURE</h2>
+            
+            <div class="tab-box">
+                <button class="tab-btn active" data-tab="upload">UPLOAD PHOTO</button>
+                <button class="tab-btn" data-tab="avatar">CHOOSE AVATAR</button>
+            </div>
+
+            <div id="uploadTab">
+                <div class="upload-area" id="dropZone">
+                    <p style="font-size:2rem;">📸</p>
+                    <p style="font-weight:600; margin-top:10px;">Click to select photo</p>
+                    <p style="font-size:0.75rem; color:var(--gray); margin-top:5px;">Max 5MB. JPG or PNG only.</p>
+                    <input type="file" id="fileInput" hidden accept="image/*">
+                </div>
+                <div id="previewBox" style="display:none; text-align:center; margin-top:1rem;">
+                    <img id="uploadPreview" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--yellow);">
+                    <button class="btn-primary" id="confirmUploadBtn" style="display:block; width:100%; margin-top:1rem;">UPLOAD & SAVE</button>
+                </div>
+            </div>
+
+            <div id="avatarTab" style="display:none">
+                <div class="avatar-grid">
+                    <!-- Presets generated via DiceBear -->
+                    <img class="avatar-opt" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix">
+                    <img class="avatar-opt" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka" data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka">
+                    <img class="avatar-opt" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Max" data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Max">
+                    <img class="avatar-opt" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Zoey" data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Zoey">
+                    <img class="avatar-opt" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jack" data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Jack">
+                    <img class="avatar-opt" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily" data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily">
+                    <img class="avatar-opt" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Oscar" data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Oscar">
+                    <img class="avatar-opt" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mia" data-url="https://api.dicebear.com/7.x/avataaars/svg?seed=Mia">
+                </div>
+                <button class="btn-primary" id="confirmAvatarBtn" style="width:100%; margin-top:1.5rem;">USE SELECTED AVATAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DELETE -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-box" style="text-align:center;">
+            <button class="modal-close">✕</button>
+            <p style="font-size:3rem;">⚠️</p>
+            <h2 style="font-family:'Bebas Neue'; font-size:1.5rem; margin:1rem 0;">DELETE ACCOUNT?</h2>
+            <p style="font-size:0.9rem; color:var(--gray); line-height:1.6; margin-bottom:1.5rem;">This will permanently erase all your workout history and profile data. You must enter your password to confirm.</p>
+            <input type="password" id="delPass" class="profile-input" placeholder="Enter password" style="background:var(--off-white); border:1px solid var(--gray-100); padding:12px; margin-bottom:1rem;">
+            <button class="btn-primary" id="confirmDeleteBtn" style="width:100%; background:var(--error); border-color:var(--error);">PERMANENTLY DELETE</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        let currentUser = null;
+        let userData = null;
+        let isEditing = false;
+        let selectedAvatar = null;
+
+        // --- Core Auth ---
+        auth.onAuthStateChanged(async user => {
+            if (!user) { window.location.href = 'auth.html'; return; }
+            if (user.email === 'bwon6697@gmail.com') { window.location.href = 'admin.html'; return; }
+            currentUser = user;
+            loadUserData();
+        });
+
+        async function loadUserData() {
+            const snap = await db.ref('users/' + currentUser.uid).once('value');
+            userData = snap.val();
+            if(!userData) return;
+
+            // UI Header
+            document.getElementById('headerName').innerText = userData.name.toUpperCase();
+            document.getElementById('headerEmail').innerText = userData.email;
+            document.getElementById('memberSince').innerText = `🏋️ MEMBER SINCE ${userData.signupDate.toUpperCase()}`;
+
+            // PFP
+            const pfp = document.getElementById('pfpDisplay');
+            if(userData.profilePic) {
+                pfp.style.backgroundImage = `url('${userData.profilePic}')`;
+                pfp.innerText = '';
+            } else {
+                pfp.innerText = userData.name.charAt(0).toUpperCase();
+            }
+
+            // Stats
+            document.getElementById('statHeight').innerText = userData.height;
+            document.getElementById('statWeight').innerText = userData.weight;
+            const bmi = (userData.weight / Math.pow(userData.height/100, 2)).toFixed(1);
+            document.getElementById('statBMI').innerText = bmi;
+            const goals = {'bulk':'BULK', 'lean_bulk':'LEAN BULK', 'cut':'CUT', 'maintain':'MAINTAIN', 'recomp':'RECOMP'};
+            document.getElementById('statGoal').innerText = goals[userData.goal] || 'FITNESS';
+
+            // Form
+            document.getElementById('inpName').value = userData.name;
+            document.getElementById('inpEmail').value = userData.email;
+            document.getElementById('inpPhone').value = userData.phone || '';
+            document.getElementById('inpAge').value = userData.age || '';
+            document.getElementById('inpGender').value = userData.gender || 'Male';
+            document.getElementById('inpGoal').value = userData.goal || 'maintain';
+
+            // Membership
+            const badge = document.getElementById('statusBadge');
+            if(userData.feesDue) {
+                badge.innerText = '● FEES DUE';
+                badge.classList.add('due');
+                document.getElementById('feesAlert').style.display = 'block';
+            } else {
+                badge.innerText = '● ACTIVE';
+                badge.classList.remove('due');
+            }
+            document.getElementById('expiryDate').innerText = userData.feesDueDate || 'Active';
+
+            hideLoader();
+        }
+
+        // --- Profile Actions ---
+        document.getElementById('editBtn').onclick = async function() {
+            const inputs = ['inpName', 'inpPhone', 'inpAge', 'inpGender', 'inpGoal'];
+            if(!isEditing) {
+                inputs.forEach(id => {
+                    document.getElementById(id).removeAttribute('readonly');
+                    document.getElementById(id).removeAttribute('disabled');
+                });
+                this.innerText = 'SAVE';
+                isEditing = true;
+            } else {
+                try {
+                    const updates = {
+                        name: document.getElementById('inpName').value,
+                        phone: document.getElementById('inpPhone').value,
+                        age: parseInt(document.getElementById('inpAge').value),
+                        gender: document.getElementById('inpGender').value,
+                        goal: document.getElementById('inpGoal').value
+                    };
+                    await db.ref('users/' + currentUser.uid).update(updates);
+                    toast('Profile updated!', 'success');
+                    location.reload(); // Refresh UI
+                } catch(e) { toast('Update failed', 'error'); }
+            }
+        };
+
+        document.getElementById('savePassBtn').onclick = async function() {
+            const cur = document.getElementById('curPass').value;
+            const nex = document.getElementById('newPass').value;
+            if(!cur || nex.length < 6) return toast('Invalid input', 'error');
+
+            try {
+                const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, cur);
+                await currentUser.reauthenticateWithCredential(cred);
+                await currentUser.updatePassword(nex);
+                toast('Password changed!', 'success');
+                document.getElementById('curPass').value = '';
+                document.getElementById('newPass').value = '';
+            } catch(e) { toast('Auth failed', 'error'); }
+        };
+
+        // --- Image Handling ---
+        document.getElementById('dropZone').onclick = () => document.getElementById('fileInput').click();
+        document.getElementById('fileInput').onchange = (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('uploadPreview').src = e.target.result;
+                document.getElementById('previewBox').style.display = 'block';
+                document.getElementById('dropZone').style.display = 'none';
+            }
+            reader.readAsDataURL(file);
+        };
+
+        document.getElementById('confirmUploadBtn').onclick = async function() {
+            const file = document.getElementById('fileInput').files[0];
+            this.disabled = true; this.innerText = 'UPLOADING...';
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', 'hff_profile_pics');
+                const res = await fetch('https://api.cloudinary.com/v1_1/jv1ngdao/image/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                await db.ref(`users/${currentUser.uid}/profilePic`).set(data.secure_url);
+                toast('Photo updated!', 'success');
+                location.reload();
+            } catch(e) { toast('Upload error', 'error'); }
+        };
+
+        document.querySelectorAll('.avatar-opt').forEach(opt => {
+            opt.onclick = () => {
+                document.querySelectorAll('.avatar-opt').forEach(i => i.classList.remove('selected'));
+                opt.classList.add('selected');
+                selectedAvatar = opt.dataset.url;
+            };
+        });
+
+        document.getElementById('confirmAvatarBtn').onclick = async function() {
+            if(!selectedAvatar) return toast('Select one', 'error');
+            await db.ref(`users/${currentUser.uid}/profilePic`).set(selectedAvatar);
+            location.reload();
+        };
+
+        // --- Modals & Utils ---
+        document.getElementById('openPicModal').onclick = () => document.getElementById('picModal').classList.add('show');
+        document.querySelectorAll('.modal-close').forEach(b => b.onclick = () => document.querySelectorAll('.modal').forEach(m => m.classList.remove('show')));
+        
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.onclick = () => {
+                document.querySelectorAll('.tab-btn').forEach(i => i.classList.remove('active'));
+                b.classList.add('active');
+                const t = b.dataset.tab;
+                document.getElementById('uploadTab').style.display = t === 'upload' ? 'block' : 'none';
+                document.getElementById('avatarTab').style.display = t === 'avatar' ? 'block' : 'none';
+            };
+        });
+
+        document.querySelectorAll('.pass-toggle').forEach(s => {
+            s.onclick = () => {
+                const i = s.previousElementSibling;
+                i.type = i.type === 'password' ? 'text' : 'password';
+                s.innerText = i.type === 'password' ? 'SHOW' : 'HIDE';
+            };
+        });
+
+        function handleLogout() { auth.signOut().then(() => window.location.href = 'home.html'); }
+        function openDeleteModal() { document.getElementById('deleteModal').classList.add('show'); }
+
+        document.getElementById('confirmDeleteBtn').onclick = async function() {
+            const pass = document.getElementById('delPass').value;
+            try {
+                const cred = firebase.auth.EmailAuthProvider.credential(currentUser.email, pass);
+                await currentUser.reauthenticateWithCredential(cred);
+                await db.ref('users/' + currentUser.uid).remove();
+                await currentUser.delete();
+                window.location.href = 'home.html';
+            } catch(e) { toast('Error deleting', 'error'); }
+        };
+
+        function hideLoader() { document.getElementById('loadingScreen').style.opacity = '0'; setTimeout(() => document.getElementById('loadingScreen').style.display = 'none', 300); }
+        function toast(m, t) {
+            const el = document.getElementById('toast');
+            el.innerText = m; el.style.background = t === 'success' ? 'var(--success)' : 'var(--error)';
+            el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>

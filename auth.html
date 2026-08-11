@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login or Sign Up | Health & Fitness Factory</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Join Health & Fitness Factory in Mehnagar. Login to your account or sign up for gym membership.">
+    <meta name="keywords" content="gym, fitness, Mehnagar, Health Fitness Factory, membership">
+    <meta name="author" content="Harshit Barnwal">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#FFD700">
+
+    <!-- Google Fonts CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDKs (Compat v10.7.0) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    
+    <!-- Local Firebase Config (Must be in js/ folder) -->
+    <script src="js/firebase-config.js"></script>
+
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --off-white: #F9F9F9;
+            --light-gray: #F0F0F0;
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --yellow-light: #FFF8DC;
+            --black: #000000;
+            --dark-gray: #333333;
+            --gray: #666666;
+            --light-text: #999999;
+            --border: #E0E0E0;
+            --error: #EF4444;
+            --success: #22C55E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--white);
+            color: var(--black);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Top Bar */
+        .back-link {
+            display: block;
+            text-align: left;
+            text-decoration: none;
+            color: var(--gray);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            margin-bottom: 2rem;
+            transition: color 0.3s;
+        }
+        .back-link:hover { color: var(--black); }
+
+        /* Branding */
+        .brand { margin-bottom: 2rem; }
+        .brand h1 { font-family: 'Bebas Neue', cursive; font-size: 1.5rem; letter-spacing: 0.05em; line-height: 1; }
+        .brand .h-text { color: var(--black); }
+        .brand .f-text { color: var(--yellow); }
+        .brand .loc-text {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--light-text);
+            letter-spacing: 0.5em;
+            margin-top: 0.3rem;
+            text-transform: uppercase;
+        }
+
+        /* Toggle Buttons */
+        .toggle-box {
+            background: var(--light-gray);
+            padding: 4px;
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        .toggle-btn {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            background: transparent;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            color: var(--gray);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .toggle-btn.active { background: var(--yellow); color: var(--black); }
+
+        /* General UI */
+        .form-title { font-family: 'Bebas Neue', cursive; font-size: 1.8rem; letter-spacing: 0.05em; margin: 1.5rem 0 0.3rem; text-align: left; }
+        .form-sub { font-size: 0.9rem; color: var(--gray); margin-bottom: 1.8rem; text-align: left; }
+        
+        .input-group { text-align: left; margin-bottom: 1.2rem; }
+        .input-label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--gray); letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+        
+        .input-wrapper { position: relative; }
+        input {
+            width: 100%;
+            background: var(--off-white);
+            border: 2px solid var(--border);
+            padding: 13px 15px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--black);
+            transition: 0.3s;
+            outline: none;
+        }
+        input:focus { border-color: var(--yellow); background: var(--white); }
+        input.error-border { border-color: var(--error); }
+
+        .btn-show {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            border: none; background: none; font-family: 'Rajdhani', sans-serif;
+            font-weight: 600; font-size: 0.7rem; color: var(--gray); cursor: pointer; letter-spacing: 0.1em;
+        }
+        .btn-show:hover { color: var(--black); }
+
+        .field-error { color: var(--error); font-size: 0.75rem; margin-top: 0.3rem; display: none; }
+
+        /* Notification Bars */
+        .msg-bar {
+            padding: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: none;
+            text-align: center;
+        }
+        .msg-error { background: rgba(239,68,68,0.1); color: var(--error); border: 1px solid rgba(239,68,68,0.2); }
+        .msg-success { background: rgba(34,197,94,0.1); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+
+        /* Logic for Signup Steps */
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+
+        /* Progress Bar */
+        .progress-container { display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; }
+        .progress-circle {
+            width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;
+            background: var(--white); color: var(--light-text); transition: 0.3s;
+        }
+        .progress-circle.active { border-color: var(--yellow); background: var(--yellow); color: var(--black); }
+        .progress-circle.completed { border-color: var(--black); background: var(--black); color: var(--yellow); }
+        .progress-line { flex: 1; height: 2px; background: var(--border); max-width: 40px; transition: 0.3s; }
+        .progress-line.active { background: var(--yellow); }
+        
+        .progress-labels { display: flex; justify-content: space-between; padding: 0 15%; margin-bottom: 1.5rem; }
+        .progress-label { font-size: 0.7rem; font-weight: 600; color: var(--light-text); letter-spacing: 0.05em; text-transform: uppercase; }
+        .progress-label.active { color: var(--yellow-dark); }
+        .progress-label.completed { color: var(--black); }
+
+        /* Signup Specifics */
+        .phone-pre { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-weight: 600; font-size: 0.9rem; color: var(--gray); padding-right: 8px; border-right: 1px solid var(--border); }
+        .strength-wrap { display: flex; align-items: center; gap: 8px; margin-top: 0.5rem; }
+        .strength-bg { flex: 1; height: 4px; background: var(--light-gray); }
+        .strength-fill { height: 100%; width: 0; transition: 0.3s; }
+        .strength-lbl { min-width: 50px; text-align: right; font-size: 0.7rem; font-weight: 500; }
+
+        /* Step 2 Specials */
+        .choice-row { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .choice-btn { flex: 1; background: var(--off-white); border: 2px solid var(--border); padding: 12px; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 0.85rem; color: var(--gray); cursor: pointer; transition: 0.3s; }
+        .choice-btn.selected { border-color: var(--yellow); background: rgba(255,215,0,0.1); color: var(--black); }
+        .input-suffix { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--light-text); font-weight: 500; font-size: 0.85rem; }
+        
+        .tab-row { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+        .tab-btn { background: none; border: none; padding: 8px 20px; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 0.8rem; color: var(--gray); cursor: pointer; position: relative; }
+        .tab-btn.active { color: var(--black); border-bottom: 2px solid var(--yellow); top: 1px; }
+
+        /* Goal Cards */
+        .goal-card { background: var(--off-white); border: 2px solid var(--border); padding: 1rem 1.2rem; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: 0.3s; text-align: left; }
+        .goal-card.selected { border-color: var(--yellow); background: var(--yellow-light); }
+        .goal-icon { width: 40px; height: 40px; background: var(--white); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+        .goal-info h4 { font-weight: 700; font-size: 1rem; color: var(--black); }
+        .goal-info p { font-size: 0.8rem; color: var(--gray); margin-top: 2px; }
+
+        /* Buttons */
+        .btn-row { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
+        .primary-btn { width: 100%; background: var(--black); color: var(--yellow); border: 2px solid var(--black); padding: 15px; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.3em; cursor: pointer; transition: 0.3s; }
+        .primary-btn:hover { background: var(--yellow); color: var(--black); }
+        .secondary-btn { flex: 1; background: transparent; border: 2px solid var(--border); color: var(--dark-gray); padding: 15px; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.3s; }
+        .secondary-btn:hover { border-color: var(--gray); }
+        .create-btn { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
+        .create-btn:hover { background: var(--black); color: var(--yellow); }
+
+        /* Bottom Utils */
+        .opt-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.8rem; }
+        .check-group { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; color: var(--gray); font-weight: 500; }
+        .forgot-link { font-size: 0.85rem; color: var(--gray); cursor: pointer; font-weight: 500; }
+        .forgot-link:hover { color: var(--black); }
+        
+        .divider { display: flex; align-items: center; margin: 1.5rem 0; }
+        .div-line { flex: 1; height: 1px; background: var(--border); }
+        .div-text { font-size: 0.75rem; color: var(--light-text); padding: 0 15px; letter-spacing: 0.2em; font-weight: 500; }
+        
+        .footer-link { text-align: center; margin-top: 1.5rem; color: var(--gray); font-size: 0.85rem; font-weight: 500; }
+        .footer-link b { color: var(--yellow-dark); cursor: pointer; font-weight: 700; }
+
+        .owner-link { text-align: center; margin-top: 1rem; color: var(--gray); font-size: 0.85rem; font-weight: 500; }
+        .owner-link b { color: var(--yellow); cursor: pointer; font-weight: 700; }
+
+        /* Hidden States */
+        .hidden { display: none; }
+        input[type=number] { -moz-appearance: textfield; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        @media (max-width: 480px) {
+            .container { padding: 0 0.5rem; }
+            .progress-labels { padding: 0 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="home.html" class="back-link">← BACK TO HOME</a>
+
+        <div class="brand">
+            <h1><span class="h-text">HEALTH & FITNESS</span> <span class="f-text">FACTORY</span></h1>
+            <span class="loc-text">MEHNAGAR</span>
+        </div>
+
+        <div class="toggle-box">
+            <button type="button" class="toggle-btn active" id="toggleLogin">LOGIN</button>
+            <button type="button" class="toggle-btn" id="toggleSignup">SIGN UP</button>
+        </div>
+
+        <div id="statusMsg" class="msg-bar"></div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+            <h2 class="form-title">WELCOME BACK</h2>
+            <p class="form-sub">Login to continue</p>
+
+            <div class="input-group">
+                <label class="input-label">EMAIL ADDRESS</label>
+                <input type="email" id="lEmail" placeholder="your@email.com">
+                <div class="field-error" id="err-lEmail"></div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">PASSWORD</label>
+                <div class="input-wrapper">
+                    <input type="password" id="lPass" placeholder="Your password">
+                    <button type="button" class="btn-show" onclick="toggleView('lPass', this)">SHOW</button>
+                </div>
+                <div class="field-error" id="err-lPass"></div>
+            </div>
+
+            <div class="opt-row">
+                <label class="check-group">
+                    <input type="checkbox" id="lRem"> Remember me
+                </label>
+                <span class="forgot-link">Forgot password?</span>
+            </div>
+
+            <button type="button" class="primary-btn" id="loginBtn">LOGIN</button>
+
+            <div class="divider">
+                <div class="div-line"></div>
+                <div class="div-text">OR</div>
+                <div class="div-line"></div>
+            </div>
+
+            <p class="owner-link" id="ownerLoginLink">Are you the gym owner? <b>OWNER LOGIN →</b></p>
+        </div>
+
+        <!-- SIGNUP FORM -->
+        <div id="signupForm" class="hidden">
+            <div class="progress-container">
+                <div class="progress-circle active" id="c1">1</div>
+                <div class="progress-line" id="l1"></div>
+                <div class="progress-circle" id="c2">2</div>
+                <div class="progress-line" id="l2"></div>
+                <div class="progress-circle" id="c3">3</div>
+            </div>
+            <div class="progress-labels">
+                <span class="progress-label active" id="lb1">Account</span>
+                <span class="progress-label" id="lb2">Body</span>
+                <span class="progress-label" id="lb3">Goal</span>
+            </div>
+
+            <!-- Signup Step 1 -->
+            <div id="step1" class="step-content active">
+                <h2 class="form-title">CREATE ACCOUNT</h2>
+                <p class="form-sub">Join Health & Fitness Factory today</p>
+
+                <div class="input-group">
+                    <label class="input-label">FULL NAME</label>
+                    <input type="text" id="sName" placeholder="Your full name">
+                    <div class="field-error" id="err-sName"></div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">EMAIL ADDRESS</label>
+                    <input type="email" id="sEmail" placeholder="your@email.com">
+                    <div class="field-error" id="err-sEmail"></div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">PHONE NUMBER</label>
+                    <div class="input-wrapper">
+                        <span class="phone-pre">+91</span>
+                        <input type="tel" id="sPhone" placeholder="10 digit number" style="padding-left: 55px;" maxlength="10">
+                    </div>
+                    <div class="field-error" id="err-sPhone"></div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">CREATE PASSWORD</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="sPass" placeholder="Min 6 characters">
+                        <button type="button" class="btn-show" onclick="toggleView('sPass', this)">SHOW</button>
+                    </div>
+                    <div class="strength-wrap">
+                        <div class="strength-bg"><div class="strength-fill" id="sBar"></div></div>
+                        <span class="strength-lbl" id="sLbl"></span>
+                    </div>
+                    <div class="field-error" id="err-sPass"></div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">CONFIRM PASSWORD</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="sConfirm" placeholder="Re-enter password">
+                        <button type="button" class="btn-show" onclick="toggleView('sConfirm', this)">SHOW</button>
+                    </div>
+                    <div class="field-error" id="err-sConfirm"></div>
+                </div>
+                <button type="button" class="primary-btn" id="sNext1">NEXT →</button>
+                <p class="footer-link">Already have an account? <b id="sBackLogin">LOGIN</b></p>
+            </div>
+
+            <!-- Signup Step 2 -->
+            <div id="step2" class="step-content">
+                <h2 class="form-title">YOUR BODY STATS</h2>
+                <p class="form-sub">Help us personalize your experience</p>
+
+                <div class="input-group">
+                    <label class="input-label">GENDER</label>
+                    <div class="choice-row" id="genderRow">
+                        <button type="button" class="choice-btn" data-val="Male">MALE</button>
+                        <button type="button" class="choice-btn" data-val="Female">FEMALE</button>
+                        <button type="button" class="choice-btn" data-val="Other">OTHER</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">AGE</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="sAge" placeholder="Your age">
+                        <span class="input-suffix">years</span>
+                    </div>
+                    <div class="field-error" id="err-sAge"></div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">HEIGHT</label>
+                    <div class="tab-row">
+                        <button type="button" class="tab-btn active" id="tabCm">CM</button>
+                        <button type="button" class="tab-btn" id="tabFt">FT/IN</button>
+                    </div>
+                    <div id="boxCm" class="input-wrapper">
+                        <input type="number" id="sHeightCm" placeholder="Height in cm">
+                        <span class="input-suffix">cm</span>
+                    </div>
+                    <div id="boxFt" class="choice-row hidden">
+                        <div class="input-wrapper" style="flex:1">
+                            <input type="number" id="sHeightFt" placeholder="Feet">
+                            <span class="input-suffix">ft</span>
+                        </div>
+                        <div class="input-wrapper" style="flex:1">
+                            <input type="number" id="sHeightIn" placeholder="Inches">
+                            <span class="input-suffix">in</span>
+                        </div>
+                    </div>
+                    <div class="field-error" id="err-sHeight"></div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">WEIGHT</label>
+                    <div class="tab-row">
+                        <button type="button" class="tab-btn active" id="tabKg">KG</button>
+                        <button type="button" class="tab-btn" id="tabLbs">LBS</button>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="number" id="sWeight" placeholder="Enter weight">
+                        <span class="input-suffix" id="weightSuf">kg</span>
+                    </div>
+                    <div class="field-error" id="err-sWeight"></div>
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="secondary-btn" id="sBack1">← BACK</button>
+                    <button type="button" class="primary-btn" id="sNext2">NEXT →</button>
+                </div>
+            </div>
+
+            <!-- Signup Step 3 -->
+            <div id="step3" class="step-content">
+                <h2 class="form-title">YOUR FITNESS GOAL</h2>
+                <p class="form-sub">What do you want to achieve?</p>
+
+                <div id="goalList">
+                    <div class="goal-card" data-val="bulk">
+                        <div class="goal-icon">💪</div>
+                        <div class="goal-info"><h4>BULK</h4><p>Gain maximum muscle and strength</p></div>
+                    </div>
+                    <div class="goal-card" data-val="lean_bulk">
+                        <div class="goal-icon">🔥</div>
+                        <div class="goal-info"><h4>LEAN BULK</h4><p>Build muscle with minimal fat gain</p></div>
+                    </div>
+                    <div class="goal-card" data-val="cut">
+                        <div class="goal-icon">✂️</div>
+                        <div class="goal-info"><h4>CUT</h4><p>Lose fat while maintaining muscle</p></div>
+                    </div>
+                    <div class="goal-card" data-val="maintain">
+                        <div class="goal-icon">⚖️</div>
+                        <div class="goal-info"><h4>MAINTAIN</h4><p>Stay at current fitness level</p></div>
+                    </div>
+                    <div class="goal-card" data-val="recomp">
+                        <div class="goal-icon">🔄</div>
+                        <div class="goal-info"><h4>RECOMPOSITION</h4><p>Lose fat and gain muscle together</p></div>
+                    </div>
+                </div>
+                <div class="field-error" id="err-sGoal"></div>
+
+                <div class="input-group" style="margin-top: 1.5rem;">
+                    <label class="input-label">EXPERIENCE LEVEL</label>
+                    <div class="choice-row" id="expRow">
+                        <button type="button" class="choice-btn" data-val="Beginner">BEGINNER</button>
+                        <button type="button" class="choice-btn" data-val="Intermediate">INTERMEDIATE</button>
+                        <button type="button" class="choice-btn" data-val="Advanced">ADVANCED</button>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="secondary-btn" id="sBack2">← BACK</button>
+                    <button type="button" class="primary-btn create-btn" id="createBtn">CREATE ACCOUNT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const auth = window.auth || (typeof firebase !== 'undefined' ? firebase.auth() : null);
+            const db = window.db || (typeof firebase !== 'undefined' ? firebase.database() : null);
+
+            if (!auth || !db) {
+                console.error('Firebase services not initialized');
+                showGlobalError('System Offline. Check configuration.');
+            }
+
+            // State
+            let signupStep = 1;
+            let isCmMode = true;
+            let isKgMode = true;
+            let selectedGender = "";
+            let selectedGoal = "";
+            let selectedExp = "";
+
+            // Toggle Logic
+            const toggleLogin = document.getElementById('toggleLogin');
+            const toggleSignup = document.getElementById('toggleSignup');
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+
+            toggleLogin.onclick = () => {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                toggleLogin.classList.add('active');
+                toggleSignup.classList.remove('active');
+                clearAllErrors();
+            };
+
+            toggleSignup.onclick = () => {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                toggleSignup.classList.add('active');
+                toggleLogin.classList.remove('active');
+                clearAllErrors();
+                updateSignupUI(1);
+            };
+
+            document.getElementById('sBackLogin').onclick = () => toggleLogin.click();
+
+            // Password View
+            window.toggleView = (id, btn) => {
+                const inp = document.getElementById(id);
+                if (inp.type === 'password') {
+                    inp.type = 'text';
+                    btn.textContent = 'HIDE';
+                } else {
+                    inp.type = 'password';
+                    btn.textContent = 'SHOW';
+                }
+            };
+
+            // Password Strength
+            document.getElementById('sPass').oninput = function() {
+                const val = this.value;
+                const bar = document.getElementById('sBar');
+                const lbl = document.getElementById('sLbl');
+                let score = 0;
+                
+                if (val.length >= 6) score = 25;
+                if (val.length >= 8) score = 50;
+                if (val.length >= 8 && /[0-9]/.test(val)) score = 75;
+                if (val.length >= 8 && /[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val)) score = 100;
+
+                bar.style.width = score + '%';
+                if (score <= 25) { bar.style.backgroundColor = '#EF4444'; lbl.textContent = score ? 'Weak' : ''; lbl.style.color = '#EF4444'; }
+                else if (score === 50) { bar.style.backgroundColor = '#F59E0B'; lbl.textContent = 'Fair'; lbl.style.color = '#F59E0B'; }
+                else if (score === 75) { bar.style.backgroundColor = '#FFD700'; lbl.textContent = 'Good'; lbl.style.color = '#E5B800'; }
+                else { bar.style.backgroundColor = '#22C55E'; lbl.textContent = 'Strong'; lbl.style.color = '#22C55E'; }
+            };
+
+            // Choice Buttons (Gender/Exp)
+            document.querySelectorAll('.choice-row .choice-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    const parent = e.target.parentElement;
+                    parent.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+                    e.target.classList.add('selected');
+                    
+                    if (parent.id === 'genderRow') selectedGender = e.target.dataset.val;
+                    if (parent.id === 'expRow') selectedExp = e.target.dataset.val;
+                };
+            });
+
+            // Goal Cards
+            document.querySelectorAll('.goal-card').forEach(card => {
+                card.onclick = () => {
+                    document.querySelectorAll('.goal-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedGoal = card.dataset.val;
+                };
+            });
+
+            // Units Toggles
+            document.getElementById('tabCm').onclick = () => {
+                isCmMode = true;
+                document.getElementById('tabCm').classList.add('active');
+                document.getElementById('tabFt').classList.remove('active');
+                document.getElementById('boxCm').classList.remove('hidden');
+                document.getElementById('boxFt').classList.add('hidden');
+            };
+            document.getElementById('tabFt').onclick = () => {
+                isCmMode = false;
+                document.getElementById('tabFt').classList.add('active');
+                document.getElementById('tabCm').classList.remove('active');
+                document.getElementById('boxFt').classList.remove('hidden');
+                document.getElementById('boxCm').classList.add('hidden');
+            };
+            document.getElementById('tabKg').onclick = () => {
+                isKgMode = true;
+                document.getElementById('tabKg').classList.add('active');
+                document.getElementById('tabLbs').classList.remove('active');
+                document.getElementById('weightSuf').textContent = 'kg';
+            };
+            document.getElementById('tabLbs').onclick = () => {
+                isKgMode = false;
+                document.getElementById('tabLbs').classList.add('active');
+                document.getElementById('tabKg').classList.remove('active');
+                document.getElementById('weightSuf').textContent = 'lbs';
+            };
+
+            // Owner Login Mode
+            document.getElementById('ownerLoginLink').onclick = () => {
+                document.getElementById('lEmail').placeholder = "bwon6697@gmail.com";
+                showGlobalSuccess("Admin mode active. Use admin credentials.");
+            };
+
+            // Navigation Signup
+            document.getElementById('sNext1').onclick = () => {
+                if (validateStep1()) updateSignupUI(2);
+            };
+            document.getElementById('sNext2').onclick = () => {
+                if (validateStep2()) updateSignupUI(3);
+            };
+            document.getElementById('sBack1').onclick = () => updateSignupUI(1);
+            document.getElementById('sBack2').onclick = () => updateSignupUI(2);
+
+            function updateSignupUI(step) {
+                signupStep = step;
+                document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+                document.getElementById('step' + step).classList.add('active');
+                
+                // Progress
+                for(let i=1; i<=3; i++) {
+                    const c = document.getElementById('c'+i);
+                    const l = document.getElementById('lb'+i);
+                    const line = document.getElementById('l'+(i-1));
+                    
+                    c.classList.remove('active', 'completed');
+                    c.innerHTML = i;
+                    l.classList.remove('active', 'completed');
+                    if(line) line.classList.remove('active');
+
+                    if(i < step) {
+                        c.classList.add('completed');
+                        c.innerHTML = "✓";
+                        l.classList.add('completed');
+                        if(line) line.classList.add('active');
+                    } else if (i === step) {
+                        c.classList.add('active');
+                        l.classList.add('active');
+                        if(line) line.classList.add('active');
+                    }
+                }
+                window.scrollTo(0,0);
+            }
+
+            // --- Logic ---
+            
+            function validateStep1() {
+                clearAllErrors();
+                let valid = true;
+                const name = document.getElementById('sName').value.trim();
+                const email = document.getElementById('sEmail').value.trim();
+                const phone = document.getElementById('sPhone').value.trim();
+                const pass = document.getElementById('sPass').value;
+                const conf = document.getElementById('sConfirm').value;
+
+                if (name.length < 2) { showFieldError('sName', 'Enter full name'); valid = false; }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('sEmail', 'Enter valid email'); valid = false; }
+                if (phone.length !== 10 || isNaN(phone)) { showFieldError('sPhone', 'Enter 10-digit number'); valid = false; }
+                if (pass.length < 6) { showFieldError('sPass', 'Minimum 6 characters'); valid = false; }
+                if (pass !== conf) { showFieldError('sConfirm', 'Passwords do not match'); valid = false; }
+                return valid;
+            }
+
+            function validateStep2() {
+                clearAllErrors();
+                let valid = true;
+                const age = parseInt(document.getElementById('sAge').value);
+                const w = document.getElementById('sWeight').value;
+
+                if (!selectedGender) { showGlobalError('Select your gender'); valid = false; }
+                if (isNaN(age) || age < 14 || age > 80) { showFieldError('sAge', 'Age 14-80 required'); valid = false; }
+                if (!w) { showFieldError('sWeight', 'Enter weight'); valid = false; }
+
+                if (isCmMode) {
+                    const cm = document.getElementById('sHeightCm').value;
+                    if (!cm || cm < 100 || cm > 250) { showFieldError('sHeight', 'Enter height 100-250cm'); valid = false; }
+                } else {
+                    const ft = document.getElementById('sHeightFt').value;
+                    if (!ft) { showFieldError('sHeight', 'Enter height'); valid = false; }
+                }
+                return valid;
+            }
+
+            // Firebase Actions
+            
+            document.getElementById('loginBtn').onclick = async () => {
+                const email = document.getElementById('lEmail').value.trim();
+                const pass = document.getElementById('lPass').value;
+
+                if (!email) { showFieldError('lEmail', 'Email required'); return; }
+                if (!pass) { showFieldError('lPass', 'Password required'); return; }
+
+                const btn = document.getElementById('loginBtn');
+                btn.textContent = "LOGGING IN...";
+                btn.disabled = true;
+
+                try {
+                    const res = await auth.signInWithEmailAndPassword(email, pass);
+                    await db.ref('users/' + res.user.uid + '/lastLogin').set(firebase.database.ServerValue.TIMESTAMP);
+                    
+                    showGlobalSuccess("Login Successful! Redirecting...");
+                    setTimeout(() => {
+                        window.location.href = (email.toLowerCase() === 'bwon6697@gmail.com') ? 'admin.html' : 'dashboard.html';
+                    }, 1500);
+                } catch (e) {
+                    btn.textContent = "LOGIN";
+                    btn.disabled = false;
+                    let m = "Login failed. Check details.";
+                    if (e.code === 'auth/wrong-password') m = "Incorrect password";
+                    if (e.code === 'auth/user-not-found') m = "No account with this email";
+                    showGlobalError(m);
+                }
+            };
+
+            document.getElementById('createBtn').onclick = async () => {
+                if (!selectedGoal) { showGlobalError("Please select a fitness goal"); return; }
+                if (!selectedExp) { showGlobalError("Please select experience level"); return; }
+
+                const btn = document.getElementById('createBtn');
+                btn.textContent = "CREATING ACCOUNT...";
+                btn.disabled = true;
+
+                const email = document.getElementById('sEmail').value.trim();
+                const pass = document.getElementById('sPass').value;
+                const name = document.getElementById('sName').value.trim();
+                const phone = document.getElementById('sPhone').value.trim();
+                const age = document.getElementById('sAge').value;
+
+                // Units Calc
+                let height = 0;
+                if (isCmMode) {
+                    height = parseInt(document.getElementById('sHeightCm').value);
+                } else {
+                    const f = parseInt(document.getElementById('sHeightFt').value) || 0;
+                    const i = parseInt(document.getElementById('sHeightIn').value) || 0;
+                    height = Math.round((f * 12 + i) * 2.54);
+                }
+
+                let weight = parseInt(document.getElementById('sWeight').value);
+                if (!isKgMode) weight = Math.round(weight * 0.453592);
+
+                try {
+                    const res = await auth.createUserWithEmailAndPassword(email, pass);
+                    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                    const d = new Date();
+                    const signupDate = months[d.getMonth()] + ' ' + d.getFullYear();
+
+                    await db.ref('users/' + res.user.uid).set({
+                        uid: res.user.uid,
+                        name, email, phone, age,
+                        gender: selectedGender,
+                        height, weight,
+                        goal: selectedGoal,
+                        experience: selectedExp,
+                        signupDate,
+                        lastLogin: firebase.database.ServerValue.TIMESTAMP,
+                        role: 'member',
+                        isActive: true,
+                        createdAt: firebase.database.ServerValue.TIMESTAMP
+                    });
+
+                    // Admin Alert
+                    await db.ref('adminNotifications').push({
+                        type: 'new_signup',
+                        message: `New Member: ${name} (${email})`,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP,
+                        read: false
+                    });
+
+                    showGlobalSuccess("Welcome! Account created successfully.");
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                } catch (e) {
+                    btn.textContent = "CREATE ACCOUNT";
+                    btn.disabled = false;
+                    let m = "Signup failed. Try again.";
+                    if (e.code === 'auth/email-already-in-use') m = "Email already registered. Please login.";
+                    showGlobalError(m);
+                }
+            };
+
+            // --- Helpers ---
+            function showFieldError(id, msg) {
+                const err = document.getElementById('err-' + id);
+                const inp = document.getElementById(id);
+                if(err) { err.textContent = msg; err.style.display = 'block'; }
+                if(inp) inp.classList.add('error-border');
+            }
+
+            function clearAllErrors() {
+                document.querySelectorAll('.field-error').forEach(e => e.style.display = 'none');
+                document.querySelectorAll('input').forEach(i => i.classList.remove('error-border'));
+                document.getElementById('statusMsg').style.display = 'none';
+            }
+
+            function showGlobalError(m) {
+                const s = document.getElementById('statusMsg');
+                s.textContent = m;
+                s.className = "msg-bar msg-error";
+                s.style.display = "block";
+                window.scrollTo(0,0);
+            }
+
+            function showGlobalSuccess(m) {
+                const s = document.getElementById('statusMsg');
+                s.textContent = m;
+                s.className = "msg-bar msg-success";
+                s.style.display = "block";
+                window.scrollTo(0,0);
+            }
+
+            // Enter Key
+            document.addEventListener('keypress', (e) => {
+                if(e.key === 'Enter') {
+                    if(!loginForm.classList.contains('hidden')) document.getElementById('loginBtn').click();
+                    else if(signupStep === 1) document.getElementById('sNext1').click();
+                    else if(signupStep === 2) document.getElementById('sNext2').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

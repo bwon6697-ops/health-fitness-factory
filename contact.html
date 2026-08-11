@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Health & Fitness Factory | Mehnagar</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Contact Health & Fitness Factory in Mehnagar. Call +91 7518141919, WhatsApp us, or visit our gym for premium fitness training.">
+    <meta name="keywords" content="contact gym Mehnagar, Health Fitness Factory, gym timings Mehnagar, Harshit Barnwal gym">
+    <meta name="theme-color" content="#FFD700">
+    <meta name="author" content="Harshit Barnwal">
+    <meta name="robots" content="index, follow">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDKs (Compat v10.7.0) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    
+    <!-- Local Firebase Config -->
+    <script src="js/firebase-config.js"></script>
+
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --light-gray: #F5F5F5;
+            --gray-100: #E8E8E8;
+            --gray: #666666;
+            --dark-gray: #333333;
+            --black: #000000;
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --yellow-light: #FFF8DC;
+            --success: #22C55E;
+            --error: #EF4444;
+            --green: #25D366; /* WhatsApp */
+        }
+
+        /* Global Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--white); color: var(--dark-gray); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+
+        /* Navbar */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-100);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; z-index: 1000;
+        }
+        .back-link { font-weight: 500; font-size: 0.85rem; color: var(--gray); text-decoration: none; letter-spacing: 0.15em; transition: 0.3s; }
+        .back-link:hover { color: var(--black); }
+        .nav-brand { font-family: 'Bebas Neue'; line-height: 1; text-align: center; text-decoration: none; }
+        .brand-h { font-size: 1.1rem; color: var(--black); }
+        .brand-f { font-size: 1.1rem; color: var(--yellow); }
+        .nav-right { font-weight: 600; font-size: 0.7rem; color: var(--yellow-dark); letter-spacing: 0.25em; text-transform: uppercase; }
+
+        /* Main Container */
+        .main-container { max-width: 1180px; margin: 0 auto; padding: 100px 1.5rem 3rem; }
+
+        /* Header */
+        .header-section { text-align: center; margin-bottom: 3rem; }
+        .badge { background: var(--yellow-light); color: var(--yellow-dark); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.4em; padding: 4px 14px; display: inline-block; margin-bottom: 1rem; }
+        .title { font-family: 'Bebas Neue'; font-size: clamp(2.5rem, 6vw, 4rem); color: var(--black); letter-spacing: 0.03em; }
+        .line { width: 60px; height: 3px; background: var(--yellow); margin: 1rem auto; }
+        .subtitle { font-weight: 400; font-size: 1rem; color: var(--gray); line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+        /* Notification Toasts */
+        .toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+            padding: 15px 25px; border-radius: 4px; z-index: 2000;
+            font-weight: 600; font-size: 0.9rem; display: none; opacity: 0;
+            transition: opacity 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .toast-success { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: var(--success); }
+        .toast-error { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--error); }
+
+        /* Quick Cards */
+        .contact-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3rem; }
+        .card {
+            background: var(--white); border: 1px solid var(--gray-100); padding: 2rem 1.5rem;
+            text-align: center; text-decoration: none; color: inherit; transition: 0.3s;
+        }
+        .card:hover { border-color: var(--yellow); transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        .icon-box { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem; }
+        .card-title { font-weight: 700; font-size: 0.85rem; letter-spacing: 0.15em; color: var(--black); }
+        .card-detail { font-weight: 500; font-size: 1rem; color: var(--dark-gray); margin-top: 0.5rem; word-break: break-all; }
+
+        /* Form + Info Grid */
+        .form-info-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; margin-bottom: 4rem; }
+        .form-container { background: var(--white); border: 1px solid var(--gray-100); padding: 2.5rem; }
+        .form-heading { font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--black); }
+        .form-sub { font-size: 0.9rem; color: var(--gray); margin-bottom: 2rem; }
+
+        .input-group { margin-bottom: 1.2rem; }
+        .label { display: block; font-weight: 600; font-size: 0.72rem; color: var(--gray); letter-spacing: 0.2em; margin-bottom: 0.4rem; }
+        input, select, textarea {
+            width: 100%; background: var(--off-white); border: 2px solid var(--gray-100);
+            padding: 13px 15px; font-family: 'Rajdhani'; font-weight: 500; font-size: 0.95rem;
+            color: var(--black); outline: none; transition: 0.3s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--yellow); background: var(--white); }
+        textarea { height: 120px; resize: vertical; }
+
+        .send-btn {
+            width: 100%; background: var(--black); color: var(--yellow); padding: 15px;
+            font-weight: 700; font-size: 0.95rem; letter-spacing: 0.3em; border: 2px solid var(--black);
+            cursor: pointer; transition: 0.3s; margin-top: 0.5rem;
+        }
+        .send-btn:hover { background: var(--yellow); color: var(--black); }
+
+        /* Info Column */
+        .info-card { background: var(--off-white); border-left: 4px solid var(--yellow); padding: 2rem; margin-bottom: 1.5rem; }
+        .info-heading { font-weight: 700; color: var(--black); font-size: 0.85rem; letter-spacing: 0.2em; margin-bottom: 1.5rem; }
+        .info-item { display: flex; gap: 1rem; margin-bottom: 1.2rem; }
+        .info-icon { font-size: 1.2rem; color: var(--yellow-dark); width: 20px; text-align: center; }
+        .info-lbl { font-weight: 700; color: var(--dark-gray); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; }
+        .info-val { font-weight: 500; font-size: 0.9rem; color: var(--dark-gray); line-height: 1.6; margin-top: 0.2rem; }
+
+        /* Live Status Card */
+        .status-card { background: var(--black); color: var(--white); padding: 2rem; }
+        .status-header { font-weight: 700; color: var(--yellow); font-size: 0.8rem; letter-spacing: 0.25em; margin-bottom: 1rem; }
+        .status-row { display: flex; align-items: center; gap: 10px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .status-text { font-weight: 700; font-size: 1rem; letter-spacing: 0.05em; }
+        .status-dot.pulse { animation: statusPulse 2s infinite; }
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+        }
+        #nextOpen { font-weight: 500; font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 5px; display: block; }
+
+        /* Location Section */
+        .location-card { background: var(--off-white); border: 1px solid var(--gray-100); padding: 3rem 2rem; text-align: center; margin-top: 2rem; }
+        .loc-icon { font-size: 4rem; color: var(--yellow); margin-bottom: 1rem; display: block; }
+        .dir-btn {
+            background: var(--yellow); color: var(--black); padding: 12px 30px; font-weight: 700;
+            font-size: 0.85rem; letter-spacing: 0.2em; text-decoration: none; border: 2px solid var(--yellow);
+            display: inline-block; margin-top: 1.5rem; transition: 0.3s;
+        }
+        .dir-btn:hover { background: transparent; }
+
+        /* Social */
+        .social-section { text-align: center; padding: 3rem 0; border-top: 1px solid var(--gray-100); border-bottom: 1px solid var(--gray-100); margin-bottom: 3rem; }
+        .social-icons { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
+        .social-btn {
+            width: 50px; height: 50px; border: 2px solid var(--gray-100); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: var(--gray);
+            font-size: 1.2rem; text-decoration: none; transition: 0.3s; background: #fff;
+        }
+        .social-btn:hover { background: var(--yellow); border-color: var(--yellow); color: var(--black); transform: translateY(-3px); }
+
+        /* FAQ */
+        .faq-box { border: 1px solid var(--gray-100); margin-bottom: 0.8rem; overflow: hidden; background: #fff; }
+        .faq-q { padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; color: var(--dark-gray); }
+        .faq-icon { font-size: 1.3rem; color: var(--yellow); transition: 0.3s; }
+        .faq-a { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: 0.3s ease-out; font-size: 0.9rem; color: var(--gray); line-height: 1.7; }
+        .faq-box.open { border-color: var(--yellow); }
+        .faq-box.open .faq-a { padding-bottom: 1.2rem; max-height: 200px; }
+
+        /* Utils */
+        .hidden { display: none !important; }
+        @media (max-width: 768px) {
+            .contact-cards { grid-template-columns: 1fr; }
+            .form-info-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .nav-right { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Notification Bars -->
+    <div id="successMsg" class="toast toast-success"></div>
+    <div id="errorMsg" class="toast toast-error"></div>
+
+    <nav class="navbar">
+        <a href="home.html" class="back-link">← BACK</a>
+        <div class="nav-brand">
+            <span class="brand-h">HEALTH & FITNESS</span>
+            <span class="brand-f">FACTORY</span>
+        </div>
+        <div class="nav-right">CONTACT</div>
+    </nav>
+
+    <main class="main-container">
+        
+        <header class="header-section">
+            <span class="badge">GET IN TOUCH</span>
+            <h1 class="title">CONTACT US</h1>
+            <div class="line"></div>
+            <p class="subtitle">Have questions? We're here to help. Reach out anytime.</p>
+        </header>
+
+        <!-- Quick Contact Cards -->
+        <section class="contact-cards">
+            <a href="tel:+917518141919" class="card">
+                <div class="icon-box" style="background: var(--yellow);">📞</div>
+                <span class="card-title">CALL US</span>
+                <p class="card-detail">+91 7518141919</p>
+            </a>
+            <a href="https://wa.me/917518141919" target="_blank" class="card">
+                <div class="icon-box" style="background: var(--green); color: white;">💬</div>
+                <span class="card-title">WHATSAPP</span>
+                <p class="card-detail">Chat with us instantly</p>
+            </a>
+            <a href="mailto:harshitbarnwal6@gmail.com" class="card">
+                <div class="icon-box" style="background: var(--yellow);">📧</div>
+                <span class="card-title">EMAIL</span>
+                <p class="card-detail">harshitbarnwal6@gmail.com</p>
+            </a>
+        </section>
+
+        <!-- Form + Info Grid -->
+        <section class="form-info-grid">
+            <!-- Left: Form -->
+            <div class="form-container">
+                <h2 class="form-heading">SEND US A MESSAGE</h2>
+                <p class="form-sub">Fill the form and we'll respond within 24 hours</p>
+
+                <div class="input-group">
+                    <label class="label">YOUR NAME</label>
+                    <input type="text" id="nameInput" placeholder="Enter your name">
+                </div>
+                <div class="input-group">
+                    <label class="label">PHONE NUMBER</label>
+                    <input type="tel" id="phoneInput" placeholder="10 digit number" maxlength="10">
+                </div>
+                <div class="input-group">
+                    <label class="label">EMAIL</label>
+                    <input type="email" id="emailInput" placeholder="your@email.com">
+                </div>
+                <div class="input-group">
+                    <label class="label">SUBJECT</label>
+                    <select id="subjectSelect">
+                        <option value="" disabled selected>Select a subject</option>
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Membership Question">Membership Question</option>
+                        <option value="Personal Training">Personal Training</option>
+                        <option value="Nutrition Advice">Nutrition Advice</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="label">MESSAGE</label>
+                    <textarea id="messageInput" placeholder="Type your message here..."></textarea>
+                </div>
+
+                <button type="button" class="send-btn" id="sendBtn">SEND MESSAGE →</button>
+                <p style="text-align:center; font-size:0.75rem; color:#999; margin-top:0.8rem;">Your information is safe with us</p>
+            </div>
+
+            <!-- Right: Info -->
+            <div>
+                <div class="info-card">
+                    <h3 class="info-heading">CONTACT INFORMATION</h3>
+                    <div class="info-item">
+                        <span class="info-icon">📍</span>
+                        <div><p class="info-lbl">Address</p><p class="info-val">Near Petrol Pump,<br>Mehnagar, Uttar Pradesh, India</p></div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📞</span>
+                        <div><p class="info-lbl">Phone</p><p class="info-val">+91 7518141919</p></div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📧</span>
+                        <div><p class="info-lbl">Email</p><p class="info-val">harshitbarnwal6@gmail.com</p></div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🕐</span>
+                        <div><p class="info-lbl">Hours</p><p class="info-val">Mon-Sat: 4 AM - 9 AM<br>Mon-Sat: 5 PM - 10 PM<br>Sunday: Closed</p></div>
+                    </div>
+                </div>
+
+                <div class="status-card">
+                    <h3 class="status-header">WE'RE OPEN</h3>
+                    <div class="status-row">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span class="status-text" id="liveStatus">CHECKING...</span>
+                    </div>
+                    <span id="nextOpen"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <header class="header-section" style="margin-bottom: 2rem;">
+            <span class="badge">OUR LOCATION</span>
+            <h2 class="title" style="font-size: 2.2rem;">VISIT OUR GYM</h2>
+            <div class="line"></div>
+        </header>
+
+        <section class="location-card">
+            <span class="loc-icon">📍</span>
+            <h3 style="font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--black);">HEALTH & FITNESS FACTORY</h3>
+            <p style="font-weight: 500; font-size: 1rem; color: var(--dark-gray); margin-top: 5px;">Near Petrol Pump, Mehnagar</p>
+            <p style="font-weight: 400; font-size: 0.9rem; color: var(--gray);">Uttar Pradesh, India</p>
+            <a href="https://www.google.com/maps/search/?api=1&query=Mehnagar+Uttar+Pradesh+petrol+pump" target="_blank" class="dir-btn">GET DIRECTIONS ON GOOGLE MAPS →</a>
+            <p style="font-size: 0.8rem; color: #999; margin-top: 15px;">Cannot find us? Call +91 7518141919</p>
+        </section>
+
+        <!-- Social -->
+        <section class="social-section">
+            <h3 class="info-lbl" style="font-size: 0.85rem; color: var(--black);">FOLLOW US</h3>
+            <p style="font-size: 0.9rem; color: var(--gray); margin-top: 5px;">Stay updated with fitness tips</p>
+            <div class="social-icons">
+                <a href="#" class="social-btn">📸</a>
+                <a href="#" class="social-btn">▶</a>
+                <a href="https://wa.me/917518141919" class="social-btn">💬</a>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <h2 class="title" style="text-align:center; font-size: 2.2rem;">COMMON QUESTIONS</h2>
+        <div class="line" style="margin: 1rem auto 2rem;"></div>
+        
+        <section style="max-width: 700px; margin: 0 auto 3rem;">
+            <div class="faq-box">
+                <div class="faq-q">How quickly do you respond to messages? <span class="faq-icon">+</span></div>
+                <div class="faq-a">We respond to all messages within 24 hours during business days. For urgent inquiries, please call or WhatsApp us directly.</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-q">Can I visit the gym without a membership? <span class="faq-icon">+</span></div>
+                <div class="faq-a">Yes! Contact us to schedule a free trial session and tour our facilities before joining.</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-q">Do you offer online consultation? <span class="faq-icon">+</span></div>
+                <div class="faq-a">Yes, we offer WhatsApp and phone consultation for nutrition and workout planning.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const db = window.db || (typeof firebase !== 'undefined' ? firebase.database() : null);
+
+        // 1. Live Status Logic
+        function updateStatus() {
+            const now = new Date();
+            const day = now.getDay();
+            const hour = now.getHours();
+            const min = now.getMinutes();
+            const time = hour + min / 60;
+            
+            const statusEl = document.getElementById('liveStatus');
+            const dotEl = document.getElementById('statusDot');
+            const nextOpenEl = document.getElementById('nextOpen');
+            
+            if (day === 0) {
+                statusEl.textContent = 'CLOSED NOW';
+                statusEl.style.color = '#EF4444';
+                dotEl.style.background = '#EF4444';
+                dotEl.classList.remove('pulse');
+                nextOpenEl.textContent = 'Opens Monday at 4:00 AM';
+                return;
+            }
+            
+            const isOpen = (time >= 4 && time < 9) || (time >= 17 && time < 22);
+            
+            if (isOpen) {
+                statusEl.textContent = 'OPEN NOW';
+                statusEl.style.color = '#22C55E';
+                dotEl.style.background = '#22C55E';
+                dotEl.classList.add('pulse');
+                nextOpenEl.textContent = '';
+            } else {
+                statusEl.textContent = 'CLOSED NOW';
+                statusEl.style.color = '#EF4444';
+                dotEl.style.background = '#EF4444';
+                dotEl.classList.remove('pulse');
+                
+                if (time < 4) nextOpenEl.textContent = 'Opens today at 4:00 AM';
+                else if (time >= 9 && time < 17) nextOpenEl.textContent = 'Opens today at 5:00 PM';
+                else if (day === 6) nextOpenEl.textContent = 'Opens Monday at 4:00 AM';
+                else nextOpenEl.textContent = 'Opens tomorrow at 4:00 AM';
+            }
+        }
+
+        // 2. Form Submission
+        document.getElementById('sendBtn').addEventListener('click', async () => {
+            const name = document.getElementById('nameInput').value.trim();
+            const phone = document.getElementById('phoneInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+            const subject = document.getElementById('subjectSelect').value;
+            const message = document.getElementById('messageInput').value.trim();
+            
+            if (!name || name.length < 2) return toast('error', 'Please enter your name');
+            if (!phone || phone.length < 10) return toast('error', 'Please enter valid phone');
+            if (!email || !email.includes('@')) return toast('error', 'Please enter valid email');
+            if (!subject) return toast('error', 'Please select a subject');
+            if (message.length < 10) return toast('error', 'Message too short');
+            
+            const btn = document.getElementById('sendBtn');
+            btn.textContent = 'SENDING...';
+            btn.disabled = true;
+            
+            try {
+                if(!db) throw new Error("Database not connected");
+                await db.ref('contactMessages').push({
+                    name, phone, email, subject, message,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    status: 'unread'
+                });
+                
+                toast('success', 'Message sent successfully!');
+                document.getElementById('nameInput').value = '';
+                document.getElementById('phoneInput').value = '';
+                document.getElementById('emailInput').value = '';
+                document.getElementById('subjectSelect').value = '';
+                document.getElementById('messageInput').value = '';
+            } catch(err) {
+                toast('error', 'Failed to send. Check connection.');
+            } finally {
+                btn.textContent = 'SEND MESSAGE →';
+                btn.disabled = false;
+            }
+        });
+
+        // 3. FAQ Accordion
+        document.querySelectorAll('.faq-q').forEach(q => {
+            q.onclick = () => {
+                const box = q.parentElement;
+                const isOpen = box.classList.contains('open');
+                document.querySelectorAll('.faq-box').forEach(b => {
+                    b.classList.remove('open');
+                    b.querySelector('.faq-icon').textContent = '+';
+                });
+                if (!isOpen) {
+                    box.classList.add('open');
+                    q.querySelector('.faq-icon').textContent = '×';
+                }
+            };
+        });
+
+        // 4. Toast Helper
+        function toast(type, msg) {
+            const el = document.getElementById(type === 'success' ? 'successMsg' : 'errorMsg');
+            el.textContent = (type === 'success' ? '✓ ' : '✗ ') + msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.opacity = '1', 10);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                setTimeout(() => el.style.display = 'none', 300);
+            }, 4000);
+        }
+
+        // Init
+        window.onload = () => {
+            updateStatus();
+            setInterval(updateStatus, 60000);
+        };
+    </script>
+</body>
+</html>
