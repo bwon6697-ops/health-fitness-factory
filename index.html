@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFD700">
+<meta name="description" content="Health & Fitness Factory in Mehnagar - Beast Mode On. Premium gym with expert trainers.">
+<title>Beast Mode On | Health & Fitness Factory | Mehnagar</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #FFFFFF;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: 'Rajdhani', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Background pattern */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255,215,0,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255,215,0,0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Words container */
+.words-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.word {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(4rem, 15vw, 10rem);
+  line-height: 0.9;
+  letter-spacing: 0.05em;
+  color: #000000;
+  opacity: 0;
+  transform: translateY(-100vh);
+  will-change: transform, opacity;
+}
+
+.word.yellow {
+  color: #FFD700;
+  text-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+}
+
+.word.drop {
+  animation: gravityDrop 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes gravityDrop {
+  0% {
+    transform: translateY(-100vh) rotate(-5deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  55% {
+    transform: translateY(20px) rotate(2deg);
+  }
+  70% {
+    transform: translateY(-15px) rotate(-1deg);
+  }
+  85% {
+    transform: translateY(5px) rotate(0.5deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Impact effect */
+.impact {
+  position: absolute;
+  width: 200px;
+  height: 3px;
+  background: linear-gradient(to right, transparent, #FFD700, transparent);
+  opacity: 0;
+  z-index: 1;
+}
+
+.impact.flash {
+  animation: impactFlash 0.6s ease-out forwards;
+}
+
+@keyframes impactFlash {
+  0% { opacity: 0; width: 0; }
+  50% { opacity: 1; width: 300px; }
+  100% { opacity: 0; width: 400px; }
+}
+
+/* Enter section */
+.enter-section {
+  position: absolute;
+  bottom: 15vh;
+  opacity: 0;
+  text-align: center;
+  transition: opacity 0.8s ease;
+  z-index: 3;
+}
+
+.enter-section.show {
+  opacity: 1;
+}
+
+.enter-line {
+  width: 40px;
+  height: 2px;
+  background: #FFD700;
+  margin: 0 auto 1rem;
+}
+
+.enter-text {
+  font-weight: 700;
+  color: rgba(0,0,0,0.6);
+  font-size: 0.85rem;
+  letter-spacing: 0.6em;
+  margin-bottom: 0.5rem;
+}
+
+.enter-arrow {
+  color: rgba(0,0,0,0.4);
+  font-size: 0.8rem;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* Top brand */
+.top-brand {
+  position: absolute;
+  top: 5vh;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s ease;
+  z-index: 3;
+}
+
+.top-brand.show { opacity: 1; }
+
+.brand-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1rem;
+  color: #000;
+  letter-spacing: 0.03em;
+}
+
+.brand-title span { color: #FFD700; }
+
+.brand-location {
+  font-weight: 500;
+  color: rgba(0,0,0,0.4);
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  margin-top: 0.3rem;
+}
+
+/* Screen shake on impact */
+.shake {
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-5px, 2px); }
+  50% { transform: translate(5px, -2px); }
+  75% { transform: translate(-3px, 1px); }
+}
+
+/* Exit fade */
+.fade-out {
+  opacity: 0 !important;
+  transition: opacity 0.5s ease;
+}
+</style>
+</head>
+<body id="body">
+
+<div class="top-brand" id="topBrand">
+  <div class="brand-title">HEALTH & FITNESS <span>FACTORY</span></div>
+  <div class="brand-location">MEHNAGAR</div>
+</div>
+
+<div class="words-container">
+  <div class="word" id="beast">BEAST</div>
+  <div class="word" id="mode">MODE</div>
+  <div class="word yellow" id="on">ON</div>
+</div>
+
+<div class="impact" id="impact"></div>
+
+<div class="enter-section" id="enterSection">
+  <div class="enter-line"></div>
+  <div class="enter-text">TAP TO ENTER</div>
+  <div class="enter-arrow">▼</div>
+</div>
+
+<script>
+let hasEntered = false;
+
+window.addEventListener('load', () => {
+  const body = document.getElementById('body');
+  const beast = document.getElementById('beast');
+  const mode = document.getElementById('mode');
+  const on = document.getElementById('on');
+  const impact = document.getElementById('impact');
+  const enterSection = document.getElementById('enterSection');
+  const topBrand = document.getElementById('topBrand');
+  
+  // Drop BEAST at 0.5s
+  setTimeout(() => {
+    beast.classList.add('drop');
+    setTimeout(() => {
+      body.classList.add('shake');
+      impact.classList.add('flash');
+      setTimeout(() => {
+        body.classList.remove('shake');
+        impact.classList.remove('flash');
+      }, 300);
+    }, 700);
+  }, 500);
+  
+  // Drop MODE at 1.8s
+  setTimeout(() => {
+    mode.classList.add('drop');
+    setTimeout(() => {
+      body.classList.add('shake');
+      impact.classList.add('flash');
+      setTimeout(() => {
+        body.classList.remove('shake');
+        impact.classList.remove('flash');
+      }, 300);
+    }, 700);
+  }, 1800);
+  
+  // Drop ON at 3.1s
+  setTimeout(() => {
+    on.classList.add('drop');
+    setTimeout(() => {
+      body.classList.add('shake');
+      impact.classList.add('flash');
+      setTimeout(() => {
+        body.classList.remove('shake');
+        impact.classList.remove('flash');
+      }, 300);
+    }, 700);
+  }, 3100);
+  
+  // Show brand at top
+  setTimeout(() => {
+    topBrand.classList.add('show');
+  }, 4200);
+  
+  // Show enter section at 4.5s
+  setTimeout(() => {
+    enterSection.classList.add('show');
+  }, 4500);
+});
+
+function enterSite(e) {
+  if (e) e.preventDefault();
+  if (hasEntered) return;
+  hasEntered = true;
+  
+  document.body.classList.add('fade-out');
+  
+  setTimeout(() => {
+    window.location.href = 'home.html';
+  }, 500);
+}
+
+document.addEventListener('click', enterSite);
+document.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  enterSite(e);
+}, { passive: false });
+</script>
+
+</body>
+</html>
