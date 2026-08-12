@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Health & Fitness Factory | Mehnagar</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Join Health & Fitness Factory in Mehnagar. Premium equipment, expert trainers, and a community built on strength.">
+    <meta name="theme-color" content="#FFD700">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDKs (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+
+    <style>
+        :root {
+            --yellow: #FFD700;
+            --yellow-dark: #E5B800;
+            --black: #000000;
+            --white: #FFFFFF;
+            --gray: #666666;
+            --light-gray: #F5F5F5;
+            --border: #E8E8E8;
+        }
+
+        /* Global Reset & Scrolling Fixes */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html {
+            scroll-behavior: smooth;
+            overflow-y: auto !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 75px; /* Navbar height compensation */
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--white);
+            color: var(--black);
+            overflow-x: hidden;
+            overflow-y: auto !important;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 1. Navbar Fixed Structure */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            min-height: 70px;
+        }
+
+        .nav-brand {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .brand-line1 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.4rem;
+            color: var(--black);
+            letter-spacing: 0.03em;
+        }
+
+        .brand-line1 .yellow { color: var(--yellow); }
+
+        .brand-line2 {
+            font-size: 0.6rem;
+            letter-spacing: 0.4em;
+            color: var(--gray);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        /* 2 & 3. Hamburger Button Fix */
+        .hamburger-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            transition: transform 0.3s ease;
+            flex-shrink: 0; /* Prevents button from getting squashed */
+        }
+
+        .hamburger-btn svg {
+            display: block;
+            width: 32px;
+            height: 16px;
+            overflow: visible;
+        }
+
+        .hamburger-btn.active {
+            transform: rotate(90deg);
+        }
+
+        /* Mobile Menu Drawer */
+        .mobile-menu {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            background: var(--white);
+            border-bottom: 3px solid var(--yellow);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            padding: 0 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .mobile-menu.open {
+            max-height: 100vh;
+            padding: 1.5rem 1.5rem 3rem;
+            overflow-y: auto;
+        }
+
+        .mobile-link {
+            display: block;
+            padding: 0.9rem 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--black);
+            text-decoration: none;
+            border-bottom: 1px solid var(--light-gray);
+            letter-spacing: 0.05em;
+        }
+
+        .mobile-btn {
+            display: block;
+            margin-top: 1rem;
+            padding: 14px;
+            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            font-size: 0.85rem;
+            text-decoration: none;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .login-btn { border-color: var(--black); color: var(--black); }
+        .signup-btn { background: var(--black); color: var(--yellow); border-color: var(--black); }
+        .dashboard-btn { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
+        .logout-btn { color: #EF4444; border-color: #EF4444; background: transparent; width: 100%; }
+
+        /* Sections */
+        .hero {
+            padding: 4rem 1.5rem;
+            text-align: center;
+            min-height: 75vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: radial-gradient(circle at center, #fff 0%, #fafafa 100%);
+        }
+
+        .hero h1 { font-family: 'Bebas Neue', cursive; font-size: clamp(3.5rem, 12vw, 6.5rem); line-height: 0.9; margin: 0; }
+        .hero p { font-size: 1.1rem; color: var(--gray); margin: 1.5rem auto; max-width: 550px; font-weight: 500; line-height: 1.6; }
+
+        .stats-section {
+            background: var(--black);
+            color: var(--white);
+            padding: 4rem 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem 1rem;
+            text-align: center;
+        }
+
+        .stat-card .num { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: var(--yellow); display: block; font-weight: 700; }
+        .stat-card .lbl { font-size: 0.65rem; letter-spacing: 3px; color: #888; text-transform: uppercase; margin-top: 8px; display: block; font-weight: 600; }
+
+        section { padding: 5rem 1.5rem; }
+        .section-title { font-family: 'Bebas Neue', cursive; font-size: 2.8rem; margin-bottom: 1.5rem; letter-spacing: 1px; }
+        .mission-box { border-left: 4px solid var(--yellow); padding: 1.5rem 2rem; background: var(--light-gray); }
+        .mission-text { font-size: 1.25rem; line-height: 1.5; color: var(--dark-gray); font-style: italic; font-weight: 500; }
+
+        footer { background: #000; color: #555; padding: 4rem 1.5rem; text-align: center; font-size: 0.8rem; border-top: 1px solid #111; }
+
+        @media (min-width: 768px) {
+            .stats-section { grid-template-columns: repeat(4, 1fr); }
+            .hero { padding: 8rem 1.5rem; }
+            .mobile-menu { width: 400px; left: auto; right: 0; border-left: 1px solid var(--border); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="home.html" class="nav-brand">
+            <div class="brand-line1">HEALTH & FITNESS <span class="yellow">FACTORY</span></div>
+            <div class="brand-line2">MEHNAGAR</div>
+        </a>
+
+        <!-- Hamburger Fixed -->
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+            <svg width="32" height="16" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="2" width="6" height="12" rx="1.5" fill="#000000"/>
+                <rect x="6" y="4" width="2" height="8" fill="#333333"/>
+                <rect x="8" y="6" width="16" height="4" rx="2" fill="#000000"/>
+                <rect x="24" y="4" width="2" height="8" fill="#333333"/>
+                <rect x="26" y="2" width="6" height="12" rx="1.5" fill="#000000"/>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#hero" class="mobile-link">HOME</a>
+        <a href="#about" class="mobile-link">MISSION</a>
+        <a href="bmi.html" class="mobile-link">BMI CALCULATOR</a>
+        <a href="exercises.html" class="mobile-link">EXERCISES</a>
+        <a href="membership.html" class="mobile-link">MEMBERSHIP</a>
+        <a href="contact.html" class="mobile-link">CONTACT</a>
+        
+        <!-- Dynamic Auth Area -->
+        <div id="loggedOutBtns">
+            <a href="auth.html" class="mobile-btn login-btn">LOGIN</a>
+            <a href="auth.html" class="mobile-btn signup-btn">SIGN UP</a>
+        </div>
+        
+        <div id="loggedInBtns" style="display:none;">
+            <a href="dashboard.html" class="mobile-btn dashboard-btn">MY DASHBOARD</a>
+            <button class="mobile-btn logout-btn" id="mobileLogout">LOGOUT</button>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <h1>BUILD YOUR<br><span style="color:var(--yellow)">LEGACY.</span></h1>
+        <p>Mehnagar's first high-performance gym. We provide the tools, the tech, and the environment. You provide the work.</p>
+        <div style="margin-top:10px;">
+            <a href="auth.html" style="background:var(--black); color:var(--yellow); padding:18px 45px; text-decoration:none; font-weight:700; letter-spacing:2px; display:inline-block;">JOIN THE FACTORY</a>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <span class="num" id="membersCount">...</span>
+            <span class="lbl">Founding Members</span>
+        </div>
+        <div class="stat-card">
+            <span class="num">NEW</span>
+            <span class="lbl">Mehnagar Venue</span>
+        </div>
+        <div class="stat-card">
+            <span class="num">6</span>
+            <span class="lbl">Days A Week</span>
+        </div>
+        <div class="stat-card">
+            <span class="num">100%</span>
+            <span class="lbl">Focus on You</span>
+        </div>
+    </div>
+
+    <!-- Mission Section -->
+    <section id="about">
+        <h2 class="section-title">THE OWNER'S WORD</h2>
+        <div class="mission-box">
+            <p class="mission-text">
+                "I wanted to bring a level of fitness to Mehnagar that was previously only available in big cities. Health & Fitness Factory is my commitment to this community's health."
+            </p>
+        </div>
+        <p style="margin-top:1.5rem; font-weight:700; font-size:1.1rem; color:var(--black);">Harshit Barnwal, <span style="color:var(--yellow-dark)">Owner</span></p>
+    </section>
+
+    <!-- Join CTA -->
+    <section id="join" style="background:var(--light-gray); text-align:center;">
+        <h2 class="section-title">READY TO WORK?</h2>
+        <p style="margin-bottom:2.5rem; font-weight:500;">Step inside and change your life. Opening specials still available.</p>
+        <a href="auth.html" style="background:var(--yellow); color:var(--black); padding:18px 55px; text-decoration:none; font-weight:700; letter-spacing:2px; display:inline-block; border: 2px solid var(--yellow);">START NOW</a>
+    </section>
+
+    <footer>
+        <p style="color:var(--white); font-family:'Bebas Neue'; font-size:1.3rem; margin-bottom:10px; letter-spacing:1px;">HEALTH & FITNESS FACTORY</p>
+        <p style="margin-bottom:20px;">Mehnagar, Uttar Pradesh (Near Petrol Pump)</p>
+        <p>&copy; 2024 Harshit Barnwal. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('hamburgerBtn');
+            const menu = document.getElementById('mobileMenu');
+            
+            // 1. Hamburger Click Toggle
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                btn.classList.toggle('active');
+                menu.classList.toggle('open');
+            };
+
+            // 2. Close menu when clicking links
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.onclick = () => {
+                    btn.classList.remove('active');
+                    menu.classList.remove('open');
+                };
+            });
+
+            // 3. Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    btn.classList.remove('active');
+                    menu.classList.remove('open');
+                }
+            });
+
+            // 4. Firebase Authentication State
+            if (typeof firebase !== 'undefined') {
+                firebase.auth().onAuthStateChanged((user) => {
+                    const loggedOut = document.getElementById('loggedOutBtns');
+                    const loggedIn = document.getElementById('loggedInBtns');
+                    if (user) {
+                        if(loggedOut) loggedOut.style.display = 'none';
+                        if(loggedIn) loggedIn.style.display = 'block';
+                    } else {
+                        if(loggedOut) loggedOut.style.display = 'block';
+                        if(loggedIn) loggedIn.style.display = 'none';
+                    }
+                });
+
+                // Logout Logic
+                document.getElementById('mobileLogout').onclick = async () => {
+                    if(confirm('Log out from your account?')) {
+                        await firebase.auth().signOut();
+                        window.location.reload();
+                    }
+                };
+
+                // Real Stats Fetching
+                loadStats();
+            }
+        });
+
+        async function loadStats() {
+            try {
+                const db = firebase.database();
+                const snap = await db.ref('users').once('value');
+                const users = snap.val() || {};
+                // Exclude admin from member count
+                const count = Object.values(users).filter(u => u && u.email !== 'bwon6697@gmail.com').length;
+                document.getElementById('membersCount').textContent = (count || 0) + '+';
+            } catch(e) {
+                console.error("Stats Error:", e);
+                document.getElementById('membersCount').textContent = '10+';
+            }
+        }
+    </script>
+</body>
+</html>
