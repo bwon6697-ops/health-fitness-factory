@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFD700">
+<meta name="description" content="Health & Fitness Factory - Premium gym in Mehnagar. Transform your body with expert trainers.">
+<meta name="keywords" content="gym Mehnagar, fitness, Health Fitness Factory, workout, personal trainer">
+<title>Health & Fitness Factory | Premium Gym in Mehnagar</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background: #FFFFFF;
+  color: #333;
+  font-family: 'Rajdhani', sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 100vh;
+  padding-top: 70px;
+}
+
+button, a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #F5F5F5; }
+::-webkit-scrollbar-thumb { background: #FFD700; border-radius: 3px; }
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #E8E8E8;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+}
+
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.brand-name {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.2rem;
+  color: #000;
+  letter-spacing: 0.03em;
+}
+
+.brand-name .yellow { color: #FFD700; }
+
+.brand-loc {
+  font-weight: 500;
+  color: #999;
+  font-size: 0.6rem;
+  letter-spacing: 0.4em;
+  margin-top: 3px;
+}
+
+.hamburger-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.hamburger-btn svg {
+  display: block;
+  width: 32px;
+  height: 16px;
+}
+
+.hamburger-btn.active {
+  transform: rotate(90deg);
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  display: none;
+}
+
+.menu-overlay.show { display: block; }
+
+.menu-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  width: 280px;
+  background: #FFF;
+  border-left: 4px solid #FFD700;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.15);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1001;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-drawer.open { transform: translateX(0); }
+
+.menu-header {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #E8E8E8;
+  background: #FAFAFA;
+}
+
+.menu-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.5rem;
+  color: #000;
+  letter-spacing: 0.05em;
+}
+
+.close-menu {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.menu-links {
+  flex: 1;
+  padding: 0.5rem 0;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+  border-bottom: 1px solid #F5F5F5;
+  letter-spacing: 0.05em;
+}
+
+.menu-link:hover {
+  background: #FFF8DC;
+  color: #E5B800;
+  padding-left: 2rem;
+}
+
+.menu-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.menu-buttons {
+  padding: 1.5rem;
+  border-top: 1px solid #E8E8E8;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.menu-btn {
+  padding: 12px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid;
+  transition: all 0.3s;
+}
+
+.btn-login {
+  background: transparent;
+  border-color: #000;
+  color: #000;
+}
+
+.btn-login:hover {
+  background: #000;
+  color: #FFD700;
+}
+
+.btn-signup {
+  background: #000;
+  border-color: #000;
+  color: #FFD700;
+}
+
+.btn-signup:hover {
+  background: #FFD700;
+  color: #000;
+  border-color: #FFD700;
+}
+
+.btn-dashboard {
+  background: #FFD700;
+  border-color: #FFD700;
+  color: #000;
+}
+
+.btn-dashboard:hover {
+  background: #E5B800;
+  border-color: #E5B800;
+}
+
+.btn-logout {
+  background: transparent;
+  border-color: #EF4444;
+  color: #EF4444;
+}
+
+.btn-logout:hover {
+  background: #EF4444;
+  color: #FFF;
+}
+
+section {
+  padding: 4rem 1.5rem;
+  position: relative;
+}
+
+.container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.hero {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAFAFA 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  max-width: 800px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: #FFF8DC;
+  color: #E5B800;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255,215,0,0.3);
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(3rem, 10vw, 6rem);
+  line-height: 0.95;
+  color: #000;
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+}
+
+.hero-title .yellow { color: #FFD700; }
+
+.hero-subtitle {
+  font-weight: 500;
+  color: #666;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 500px;
+  margin-bottom: 2rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: #000;
+  color: #FFD700;
+  padding: 15px 32px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.25em;
+  border: 2px solid #000;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  background: #FFD700;
+  color: #000;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #333;
+  padding: 15px 32px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.25em;
+  border: 2px solid #E8E8E8;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  border-color: #FFD700;
+  color: #FFD700;
+}
+
+.stats-section {
+  background: #000;
+  color: #FFF;
+  padding: 3rem 1.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.stat-item {
+  padding: 1rem;
+}
+
+.stat-number {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: #FFD700;
+  line-height: 1;
+}
+
+.stat-label {
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  margin-top: 0.5rem;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-badge {
+  display: inline-block;
+  background: #FFF8DC;
+  color: #E5B800;
+  padding: 4px 14px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255,215,0,0.3);
+}
+
+.section-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #000;
+  letter-spacing: 0.03em;
+}
+
+.section-line {
+  width: 60px;
+  height: 3px;
+  background: #FFD700;
+  margin: 1rem auto;
+}
+
+.section-subtitle {
+  font-weight: 500;
+  color: #666;
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.about {
+  background: #FAFAFA;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+  .features-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.feature-card {
+  background: #FFF;
+  border: 1px solid #E8E8E8;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.feature-card:hover {
+  border-color: #FFD700;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.feature-icon {
+  width: 60px;
+  height: 60px;
+  background: #FFD700;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.feature-title {
+  font-weight: 700;
+  color: #000;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.feature-desc {
+  font-weight: 400;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.programs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+  .programs-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .programs-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+.program-card {
+  background: #FFF;
+  border: 1px solid #E8E8E8;
+  padding: 2rem 1.5rem;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.program-card:hover {
+  border-color: #FFD700;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.program-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.program-title {
+  font-weight: 700;
+  color: #000;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.program-desc {
+  font-weight: 400;
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.plans-section {
+  background: #FAFAFA;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 700px;
+  margin: 2rem auto 0;
+}
+
+@media (min-width: 768px) {
+  .plans-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.plan-card {
+  background: #FFF;
+  border: 2px solid #E8E8E8;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.plan-card.featured {
+  border-color: #FFD700;
+  box-shadow: 0 10px 40px rgba(255,215,0,0.15);
+}
+
+.plan-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFD700;
+  color: #000;
+  padding: 4px 16px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+}
+
+.plan-name {
+  font-weight: 700;
+  color: #666;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+}
+
+.plan-price {
+  margin: 1rem 0;
+}
+
+.plan-currency {
+  font-weight: 400;
+  color: #000;
+  font-size: 1.3rem;
+  vertical-align: top;
+}
+
+.plan-amount {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 3rem;
+  color: #000;
+}
+
+.plan-period {
+  font-weight: 400;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 1.5rem 0;
+  border-top: 1px solid #E8E8E8;
+  border-bottom: 1px solid #E8E8E8;
+  margin: 1.5rem 0;
+}
+
+.plan-features li {
+  padding: 0.5rem 0;
+  color: #333;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.plan-features li::before {
+  content: '✓';
+  color: #FFD700;
+  font-weight: 700;
+}
+
+.plan-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 2px solid #000;
+  color: #000;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.plan-btn:hover {
+  background: #000;
+  color: #FFD700;
+}
+
+.plan-card.featured .plan-btn {
+  background: #FFD700;
+  border-color: #FFD700;
+  color: #000;
+}
+
+.plan-card.featured .plan-btn:hover {
+  background: #000;
+  color: #FFD700;
+}
+
+.timings-section {
+  background: #000;
+  color: #FFF;
+}
+
+.timings-section .section-title { color: #FFF; }
+
+.timings-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 700px;
+  margin: 2rem auto 0;
+}
+
+@media (min-width: 640px) {
+  .timings-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.timing-card {
+  background: rgba(255,215,0,0.05);
+  border: 1px solid rgba(255,215,0,0.2);
+  padding: 2rem;
+  text-align: center;
+}
+
+.timing-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.timing-label {
+  font-weight: 700;
+  color: #FFD700;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  margin-bottom: 0.5rem;
+}
+
+.timing-time {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #FFF;
+}
+
+.timings-note {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.cta-section {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  text-align: center;
+  padding: 4rem 1.5rem;
+}
+
+.cta-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #000;
+  letter-spacing: 0.03em;
+  margin-bottom: 1rem;
+}
+
+.cta-subtitle {
+  font-weight: 500;
+  color: rgba(0,0,0,0.7);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cta-btn {
+  background: #000;
+  color: #FFD700;
+  padding: 16px 40px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  border: 2px solid #000;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s;
+}
+
+.cta-btn:hover {
+  background: transparent;
+  color: #000;
+}
+
+footer {
+  background: #000;
+  color: #FFF;
+  padding: 3rem 1.5rem 1rem;
+}
+
+.footer-content {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .footer-content { grid-template-columns: 2fr 1fr 1fr; }
+}
+
+.footer-brand {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.5rem;
+  color: #FFD700;
+  margin-bottom: 0.5rem;
+}
+
+.footer-text {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.footer-heading {
+  font-weight: 700;
+  color: #FFD700;
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+  margin-bottom: 1rem;
+}
+
+.footer-list {
+  list-style: none;
+}
+
+.footer-list li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-list a {
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s;
+}
+
+.footer-list a:hover { color: #FFD700; }
+
+.footer-contact {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,215,0,0.1);
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  text-align: center;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.8rem;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="brand-name">HEALTH & FITNESS <span class="yellow">FACTORY</span></div>
+    <div class="brand-loc">MEHNAGAR</div>
+  </div>
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+    <svg width="32" height="16" viewBox="0 0 32 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="2" width="6" height="12" rx="1.5" fill="#000000"/>
+      <rect x="6" y="4" width="2" height="8" fill="#333333"/>
+      <rect x="8" y="6" width="16" height="4" rx="2" fill="#000000"/>
+      <rect x="24" y="4" width="2" height="8" fill="#333333"/>
+      <rect x="26" y="2" width="6" height="12" rx="1.5" fill="#000000"/>
+    </svg>
+  </button>
+</nav>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="menu-drawer" id="menuDrawer">
+  <div class="menu-header">
+    <div class="menu-title">MENU</div>
+    <button class="close-menu" id="closeMenu">✕</button>
+  </div>
+  <div class="menu-links">
+    <a href="#hero" class="menu-link"><span class="menu-icon">🏠</span> Home</a>
+    <a href="#programs" class="menu-link"><span class="menu-icon">💪</span> Programs</a>
+    <a href="#plans" class="menu-link"><span class="menu-icon">💰</span> Plans</a>
+    <a href="reviews.html" class="menu-link"><span class="menu-icon">⭐</span> Reviews</a>
+    <a href="bmi.html" class="menu-link"><span class="menu-icon">🔢</span> BMI Calculator</a>
+    <a href="exercises.html" class="menu-link"><span class="menu-icon">🏋️</span> Exercises</a>
+    <a href="membership.html" class="menu-link"><span class="menu-icon">📋</span> Membership</a>
+    <a href="contact.html" class="menu-link"><span class="menu-icon">📞</span> Contact</a>
+  </div>
+  <div class="menu-buttons" id="loggedOutBtns">
+    <a href="auth.html" class="menu-btn btn-login">LOGIN</a>
+    <a href="auth.html" class="menu-btn btn-signup">SIGN UP</a>
+  </div>
+  <div class="menu-buttons" id="loggedInBtns" style="display:none;">
+    <a href="dashboard.html" class="menu-btn btn-dashboard">MY DASHBOARD</a>
+    <button class="menu-btn btn-logout" id="logoutBtn">LOGOUT</button>
+  </div>
+</div>
+
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">⚡ MEHNAGAR'S PREMIUM GYM</div>
+      <h1 class="hero-title">TRANSFORM<br><span class="yellow">YOUR BODY.</span></h1>
+      <p class="hero-subtitle">Expert trainers. Modern equipment. Personalized plans. Join Health & Fitness Factory today and start your transformation journey.</p>
+      <div class="hero-buttons">
+        <a href="auth.html" class="btn-primary">JOIN NOW</a>
+        <a href="#programs" class="btn-secondary">EXPLORE</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number" id="membersCount">0+</div>
+      <div class="stat-label">MEMBERS JOINED</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">NEW</div>
+      <div class="stat-label">PREMIUM GYM</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">6</div>
+      <div class="stat-label">DAYS OPEN WEEKLY</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">COMMITMENT</div>
+    </div>
+  </div>
+</section>
+
+<section class="about">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-badge">ABOUT US</div>
+      <h2 class="section-title">WHERE STRENGTH IS BUILT</h2>
+      <div class="section-line"></div>
+      <p class="section-subtitle">Located in Mehnagar, Health & Fitness Factory is your premium destination for transformation.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🏋️</div>
+        <div class="feature-title">EXPERT TRAINERS</div>
+        <div class="feature-desc">Certified professionals dedicated to your fitness journey</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">MODERN EQUIPMENT</div>
+        <div class="feature-desc">Top quality machines and free weights for all levels</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">REAL RESULTS</div>
+        <div class="feature-desc">Proven methods that deliver lasting transformations</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="programs">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-badge">OUR PROGRAMS</div>
+      <h2 class="section-title">TRAIN FOR YOUR GOAL</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="programs-grid">
+      <div class="program-card">
+        <div class="program-icon">🔥</div>
+        <div class="program-title">WEIGHT LOSS</div>
+        <div class="program-desc">Science-backed HIIT and cardio programs for maximum fat burning</div>
+      </div>
+      <div class="program-card">
+        <div class="program-icon">💪</div>
+        <div class="program-title">MUSCLE GAIN</div>
+        <div class="program-desc">Progressive overload training with proper nutrition for lean mass</div>
+      </div>
+      <div class="program-card">
+        <div class="program-icon">🏃</div>
+        <div class="program-title">CARDIO</div>
+        <div class="program-desc">Build stamina, heart health, and athletic performance</div>
+      </div>
+      <div class="program-card">
+        <div class="program-icon">🧘</div>
+        <div class="program-title">FLEXIBILITY</div>
+        <div class="program-desc">Improve mobility and prevent injury with proper stretching</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="plans-section" id="plans">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-badge">MEMBERSHIP</div>
+      <h2 class="section-title">SIMPLE PRICING</h2>
+      <div class="section-line"></div>
+      <p class="section-subtitle">No hidden fees. Just results.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-name">MONTHLY</div>
+        <div class="plan-price">
+          <span class="plan-currency">₹</span>
+          <span class="plan-amount">700</span>
+          <span class="plan-period">/month</span>
+        </div>
+        <ul class="plan-features">
+          <li>Full gym access</li>
+          <li>All equipment usage</li>
+          <li>Basic workout guidance</li>
+          <li>Locker room access</li>
+        </ul>
+        <a href="auth.html" class="plan-btn">CHOOSE MONTHLY</a>
+      </div>
+      <div class="plan-card featured">
+        <div class="plan-badge">BEST VALUE</div>
+        <div class="plan-name">3 MONTHS</div>
+        <div class="plan-price">
+          <span class="plan-currency">₹</span>
+          <span class="plan-amount">1800</span>
+          <span class="plan-period">/3 months</span>
+        </div>
+        <ul class="plan-features">
+          <li>Everything in Monthly</li>
+          <li>Save ₹300</li>
+          <li>Priority booking</li>
+          <li>Free consultation</li>
+        </ul>
+        <a href="auth.html" class="plan-btn">CHOOSE 3 MONTHS</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="timings-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-badge">OPEN 6 DAYS</div>
+      <h2 class="section-title">WORKOUT TIMINGS</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="timings-grid">
+      <div class="timing-card">
+        <div class="timing-icon">☀️</div>
+        <div class="timing-label">MORNING</div>
+        <div class="timing-time">4:00 AM - 9:00 AM</div>
+      </div>
+      <div class="timing-card">
+        <div class="timing-icon">🌙</div>
+        <div class="timing-label">EVENING</div>
+        <div class="timing-time">5:00 PM - 10:00 PM</div>
+      </div>
+    </div>
+    <div class="timings-note">Sunday Closed</div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <h2 class="cta-title">READY TO BEGIN?</h2>
+    <p class="cta-subtitle">Join Health & Fitness Factory today. Your transformation starts now.</p>
+    <a href="auth.html" class="cta-btn">JOIN NOW</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-content">
+    <div>
+      <div class="footer-brand">HEALTH & FITNESS FACTORY</div>
+      <p class="footer-text">Premium fitness center in Mehnagar dedicated to transforming lives through proven training methods.</p>
+    </div>
+    <div>
+      <div class="footer-heading">QUICK LINKS</div>
+      <ul class="footer-list">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#programs">Programs</a></li>
+        <li><a href="#plans">Plans</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">CONTACT</div>
+      <div class="footer-contact">📍 Near Petrol Pump, Mehnagar, UP</div>
+      <div class="footer-contact">📞 +91 7518141919</div>
+      <div class="footer-contact">📧 harshitbarnwal6@gmail.com</div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Health & Fitness Factory. All rights reserved.</div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const hamburger = document.getElementById('hamburgerBtn');
+  const menuDrawer = document.getElementById('menuDrawer');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const closeMenu = document.getElementById('closeMenu');
+  
+  function openMenu() {
+    hamburger.classList.add('active');
+    menuDrawer.classList.add('open');
+    menuOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeMenuFunc() {
+    hamburger.classList.remove('active');
+    menuDrawer.classList.remove('open');
+    menuOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  
+  hamburger.addEventListener('click', openMenu);
+  closeMenu.addEventListener('click', closeMenuFunc);
+  menuOverlay.addEventListener('click', closeMenuFunc);
+  
+  document.querySelectorAll('.menu-link, .menu-btn').forEach(link => {
+    link.addEventListener('click', () => setTimeout(closeMenuFunc, 100));
+  });
+  
+  if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        document.getElementById('loggedOutBtns').style.display = 'none';
+        document.getElementById('loggedInBtns').style.display = 'flex';
+      } else {
+        document.getElementById('loggedOutBtns').style.display = 'flex';
+        document.getElementById('loggedInBtns').style.display = 'none';
+      }
+    });
+    
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (confirm('Logout?')) {
+        await firebase.auth().signOut();
+        window.location.reload();
+      }
+    });
+    
+    loadMemberCount();
+    
+    if (typeof loadBroadcastBanner === 'function') {
+      loadBroadcastBanner();
+    }
+  }
+});
+
+async function loadMemberCount() {
+  try {
+    const db = firebase.database();
+    const snap = await db.ref('users').once('value');
+    const users = snap.val() || {};
+    const count = Object.values(users).filter(u => u && u.email !== 'bwon6697@gmail.com').length;
+    document.getElementById('membersCount').textContent = count + '+';
+  } catch(err) {
+    document.getElementById('membersCount').textContent = '5+';
+  }
+}
+</script>
+
+</body>
+</html>

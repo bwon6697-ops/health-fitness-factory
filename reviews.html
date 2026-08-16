@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FFD700">
+<meta name="description" content="Member reviews of Health & Fitness Factory Mehnagar">
+<title>Member Reviews | Health & Fitness Factory</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background: #FAFAFA;
+  color: #333;
+  font-family: 'Rajdhani', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  padding-top: 70px;
+  padding-bottom: 2rem;
+}
+
+button, a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #E8E8E8;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+}
+
+.nav-back {
+  color: #666;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+}
+.nav-back:hover { color: #000; }
+
+.nav-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1rem;
+  color: #000;
+  letter-spacing: 0.03em;
+}
+.nav-title span { color: #FFD700; }
+
+.nav-tag {
+  color: #FFD700;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+}
+
+.main-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header-badge {
+  display: inline-block;
+  background: #FFF8DC;
+  color: #E5B800;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255,215,0,0.3);
+}
+
+.page-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #000;
+  letter-spacing: 0.03em;
+}
+
+.title-line {
+  width: 60px;
+  height: 3px;
+  background: #FFD700;
+  margin: 1rem auto;
+}
+
+.page-subtitle {
+  color: #666;
+  font-size: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Stats bar */
+.stats-bar {
+  background: #FFF;
+  border: 1px solid #E8E8E8;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 2rem;
+  color: #FFD700;
+}
+
+.stat-label {
+  color: #666;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+}
+
+.avg-stars {
+  color: #FFD700;
+  font-size: 1.2rem;
+  letter-spacing: 3px;
+}
+
+/* Add review section */
+.add-review-section {
+  background: #FFF;
+  border: 2px solid #FFD700;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.add-review-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.3rem;
+  color: #000;
+  margin-bottom: 0.5rem;
+}
+
+.add-review-subtitle {
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.rating-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #E0E0E0;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.star-btn:hover,
+.star-btn.active {
+  color: #FFD700;
+  transform: scale(1.1);
+}
+
+.rating-label {
+  text-align: center;
+  font-weight: 600;
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  min-height: 20px;
+}
+
+.review-textarea {
+  width: 100%;
+  padding: 12px 15px;
+  background: #F9F9F9;
+  border: 2px solid #E0E0E0;
+  color: #000;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  outline: none;
+  min-height: 100px;
+  resize: vertical;
+  margin-bottom: 1rem;
+}
+.review-textarea:focus {
+  border-color: #FFD700;
+  background: #FFF;
+}
+
+.char-count {
+  text-align: right;
+  color: #999;
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.submit-review-btn {
+  width: 100%;
+  padding: 14px;
+  background: #000;
+  color: #FFD700;
+  border: 2px solid #000;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.submit-review-btn:hover {
+  background: #FFD700;
+  color: #000;
+}
+.submit-review-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.login-prompt {
+  text-align: center;
+  padding: 2rem;
+  background: #FFF;
+  border: 1px solid #E8E8E8;
+  margin-bottom: 2rem;
+}
+
+.login-prompt-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.login-prompt-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.3rem;
+  color: #000;
+  margin-bottom: 0.5rem;
+}
+
+.login-prompt-text {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.login-prompt-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  background: #FFD700;
+  color: #000;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  font-size: 0.85rem;
+  border: 2px solid #FFD700;
+  transition: all 0.3s;
+}
+.login-prompt-btn:hover {
+  background: #000;
+  color: #FFD700;
+}
+
+/* Reviews list */
+.reviews-section {
+  margin-top: 2rem;
+}
+
+.reviews-title {
+  font-family: 'Bebas Neue', cursive;
+  font-size: 1.5rem;
+  color: #000;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #FFD700;
+}
+
+.review-card {
+  background: #FFF;
+  border: 1px solid #E8E8E8;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s;
+}
+
+.review-card:hover {
+  border-color: #FFD700;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.review-card.own-review {
+  border-color: #FFD700;
+  background: #FFFBEB;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.reviewer-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #FFD700;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.reviewer-info {
+  flex: 1;
+  min-width: 150px;
+}
+
+.reviewer-name {
+  font-weight: 700;
+  color: #000;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.you-badge {
+  background: #FFD700;
+  color: #000;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.review-date {
+  color: #999;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.review-stars {
+  color: #FFD700;
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+
+.review-text {
+  color: #333;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.review-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #F0F0F0;
+}
+
+.review-action-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid #E0E0E0;
+  color: #666;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.review-action-btn:hover {
+  border-color: #FFD700;
+  color: #E5B800;
+}
+
+.review-action-btn.delete-btn:hover {
+  border-color: #EF4444;
+  color: #EF4444;
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 3rem;
+  background: #FFF;
+  border: 1px solid #E8E8E8;
+  color: #999;
+}
+
+.no-reviews-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.no-reviews-text {
+  font-weight: 600;
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.loading-reviews {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+}
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  z-index: 10000;
+  display: none;
+  border-radius: 4px;
+  color: #FFF;
+}
+.toast.show { display: block; }
+.toast.success { background: #22C55E; }
+.toast.error { background: #EF4444; }
+
+.filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  background: #FFF;
+  border: 1px solid #E0E0E0;
+  color: #666;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.filter-tab.active {
+  background: #FFD700;
+  border-color: #FFD700;
+  color: #000;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-back" onclick="goBack()">← BACK</a>
+  <div class="nav-title">HEALTH & FITNESS <span>FACTORY</span></div>
+  <div class="nav-tag">REVIEWS</div>
+</nav>
+
+<div class="main-container">
+
+  <div class="page-header">
+    <div class="header-badge">⭐ MEMBER REVIEWS</div>
+    <h1 class="page-title">WHAT MEMBERS SAY</h1>
+    <div class="title-line"></div>
+    <p class="page-subtitle">Real reviews from real members of Health & Fitness Factory</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-value" id="totalReviews">0</div>
+      <div class="stat-label">TOTAL REVIEWS</div>
+    </div>
+    <div class="stat-item">
+      <div class="avg-stars" id="avgStars">☆☆☆☆☆</div>
+      <div class="stat-label">AVERAGE RATING</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value" id="ratingNum">0.0</div>
+      <div class="stat-label">OUT OF 5</div>
+    </div>
+  </div>
+
+  <div id="addReviewContainer">
+    <div class="add-review-section" id="addReviewForm" style="display:none;">
+      <div class="add-review-title">SHARE YOUR EXPERIENCE</div>
+      <div class="add-review-subtitle">Help others by sharing your honest review</div>
+      
+      <div class="rating-input" id="ratingInput">
+        <button class="star-btn" data-rating="1">★</button>
+        <button class="star-btn" data-rating="2">★</button>
+        <button class="star-btn" data-rating="3">★</button>
+        <button class="star-btn" data-rating="4">★</button>
+        <button class="star-btn" data-rating="5">★</button>
+      </div>
+      
+      <div class="rating-label" id="ratingLabel">Tap stars to rate</div>
+      
+      <textarea class="review-textarea" id="reviewText" placeholder="Write your review here... What did you like? How's the equipment? Trainers?" maxlength="500"></textarea>
+      
+      <div class="char-count"><span id="charCount">0</span>/500 characters</div>
+      
+      <button class="submit-review-btn" id="submitReviewBtn" onclick="submitReview()">POST REVIEW</button>
+    </div>
+    
+    <div class="login-prompt" id="loginPrompt" style="display:none;">
+      <div class="login-prompt-icon">🔒</div>
+      <div class="login-prompt-title">MEMBERS ONLY</div>
+      <div class="login-prompt-text">Login or sign up to add your review</div>
+      <a href="auth.html" class="login-prompt-btn">LOGIN NOW</a>
+    </div>
+  </div>
+
+  <div class="reviews-section">
+    <div class="reviews-title">ALL REVIEWS</div>
+    
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">ALL</button>
+      <button class="filter-tab" data-filter="5">★★★★★</button>
+      <button class="filter-tab" data-filter="4">★★★★</button>
+      <button class="filter-tab" data-filter="3">★★★</button>
+      <button class="filter-tab" data-filter="recent">RECENT</button>
+    </div>
+    
+    <div id="reviewsList">
+      <div class="loading-reviews">Loading reviews...</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let currentUser = null;
+let userData = null;
+let userReview = null;
+let selectedRating = 0;
+let allReviews = [];
+let currentFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const auth = firebase.auth();
+  const db = firebase.database();
+  
+  // Star rating
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const rating = parseInt(btn.dataset.rating);
+      selectedRating = rating;
+      updateStarDisplay(rating);
+    });
+    
+    btn.addEventListener('mouseenter', () => {
+      const rating = parseInt(btn.dataset.rating);
+      updateStarDisplay(rating);
+    });
+  });
+  
+  document.getElementById('ratingInput').addEventListener('mouseleave', () => {
+    updateStarDisplay(selectedRating);
+  });
+  
+  // Character count
+  document.getElementById('reviewText').addEventListener('input', (e) => {
+    document.getElementById('charCount').textContent = e.target.value.length;
+  });
+  
+  // Filter tabs
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentFilter = tab.dataset.filter;
+      renderReviews();
+    });
+  });
+  
+  // Auth check
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      currentUser = user;
+      
+      try {
+        const snap = await db.ref('users/' + user.uid).once('value');
+        userData = snap.val();
+      } catch(err) {
+        console.log('User data error');
+      }
+      
+      // Show add review form
+      document.getElementById('addReviewForm').style.display = 'block';
+      document.getElementById('loginPrompt').style.display = 'none';
+    } else {
+      currentUser = null;
+      userData = null;
+      document.getElementById('addReviewForm').style.display = 'none';
+      document.getElementById('loginPrompt').style.display = 'block';
+    }
+    
+    loadReviews();
+  });
+});
+
+function updateStarDisplay(rating) {
+  document.querySelectorAll('.star-btn').forEach((btn, i) => {
+    if (i < rating) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  const labels = ['Tap stars to rate', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+  document.getElementById('ratingLabel').textContent = labels[rating] || 'Tap stars to rate';
+}
+
+async function submitReview() {
+  if (!currentUser) {
+    showToast('Please login first', 'error');
+    return;
+  }
+  
+  if (selectedRating === 0) {
+    showToast('Please select a rating', 'error');
+    return;
+  }
+  
+  const text = document.getElementById('reviewText').value.trim();
+  
+  if (!text || text.length < 10) {
+    showToast('Write at least 10 characters', 'error');
+    return;
+  }
+  
+  const btn = document.getElementById('submitReviewBtn');
+  btn.textContent = 'POSTING...';
+  btn.disabled = true;
+  
+  try {
+    const db = firebase.database();
+    const reviewData = {
+      userId: currentUser.uid,
+      userName: userData ? userData.name : 'User',
+      userPhoto: userData ? (userData.profilePic || '') : '',
+      rating: selectedRating,
+      text: text,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      edited: false
+    };
+    
+    if (userReview && userReview.id) {
+      // Update existing
+      await db.ref('reviews/' + userReview.id).update({
+        rating: selectedRating,
+        text: text,
+        edited: true,
+        editedAt: firebase.database.ServerValue.TIMESTAMP
+      });
+      showToast('Review updated!', 'success');
+    } else {
+      // Create new
+      await db.ref('reviews').push(reviewData);
+      showToast('Review posted successfully!', 'success');
+    }
+    
+    // Reset form
+    selectedRating = 0;
+    document.getElementById('reviewText').value = '';
+    document.getElementById('charCount').textContent = '0';
+    updateStarDisplay(0);
+    
+    btn.textContent = 'POST REVIEW';
+    btn.disabled = false;
+    
+    // Reload reviews
+    setTimeout(() => loadReviews(), 500);
+    
+  } catch(err) {
+    console.error(err);
+    showToast('Failed to post review', 'error');
+    btn.textContent = 'POST REVIEW';
+    btn.disabled = false;
+  }
+}
+
+async function loadReviews() {
+  const db = firebase.database();
+  
+  try {
+    const snap = await db.ref('reviews').once('value');
+    const reviews = snap.val() || {};
+    
+    allReviews = Object.entries(reviews)
+      .map(([id, review]) => ({id, ...review}))
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    
+    // Check if user has review
+    if (currentUser) {
+      userReview = allReviews.find(r => r.userId === currentUser.uid);
+      if (userReview) {
+        // Load existing review into form
+        selectedRating = userReview.rating;
+        document.getElementById('reviewText').value = userReview.text;
+        document.getElementById('charCount').textContent = userReview.text.length;
+        updateStarDisplay(userReview.rating);
+        document.getElementById('submitReviewBtn').textContent = 'UPDATE REVIEW';
+      }
+    }
+    
+    // Update stats
+    updateStats();
+    
+    // Render reviews
+    renderReviews();
+    
+  } catch(err) {
+    console.error('Load reviews error:', err);
+    document.getElementById('reviewsList').innerHTML = '<div class="no-reviews"><div class="no-reviews-text">Failed to load reviews</div></div>';
+  }
+}
+
+function updateStats() {
+  const total = allReviews.length;
+  document.getElementById('totalReviews').textContent = total;
+  
+  if (total === 0) {
+    document.getElementById('avgStars').textContent = '☆☆☆☆☆';
+    document.getElementById('ratingNum').textContent = '0.0';
+    return;
+  }
+  
+  const sum = allReviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+  const avg = sum / total;
+  
+  document.getElementById('ratingNum').textContent = avg.toFixed(1);
+  
+  const fullStars = Math.round(avg);
+  let stars = '';
+  for (let i = 0; i < 5; i++) {
+    stars += i < fullStars ? '★' : '☆';
+  }
+  document.getElementById('avgStars').textContent = stars;
+}
+
+function renderReviews() {
+  const list = document.getElementById('reviewsList');
+  
+  let filtered = allReviews;
+  
+  if (currentFilter === '5') filtered = allReviews.filter(r => r.rating === 5);
+  else if (currentFilter === '4') filtered = allReviews.filter(r => r.rating === 4);
+  else if (currentFilter === '3') filtered = allReviews.filter(r => r.rating === 3);
+  else if (currentFilter === 'recent') {
+    const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    filtered = allReviews.filter(r => r.timestamp > weekAgo);
+  }
+  
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="no-reviews"><div class="no-reviews-icon">💬</div><div class="no-reviews-text">No reviews yet</div><div style="color:#999;font-size:0.85rem;">Be the first to review!</div></div>';
+    return;
+  }
+  
+  list.innerHTML = '';
+  
+  filtered.forEach(review => {
+    const card = document.createElement('div');
+    card.className = 'review-card';
+    if (currentUser && review.userId === currentUser.uid) {
+      card.classList.add('own-review');
+    }
+    
+    const initial = review.userName ? review.userName.charAt(0).toUpperCase() : 'U';
+    let avatarStyle = 'background: #FFD700;';
+    if (review.userPhoto) {
+      avatarStyle = 'background-image: url(' + review.userPhoto + '); background-size: cover; background-position: center;';
+    }
+    
+    const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+    const date = review.timestamp ? formatReviewDate(review.timestamp) : 'Recently';
+    const isOwn = currentUser && review.userId === currentUser.uid;
+    const editedTag = review.edited ? ' <span style="color:#999;font-size:0.75rem;">(edited)</span>' : '';
+    
+    card.innerHTML = `
+      <div class="review-header">
+        <div class="reviewer-avatar" style="${avatarStyle}">${review.userPhoto ? '' : initial}</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">
+            ${review.userName || 'User'}
+            ${isOwn ? '<span class="you-badge">YOU</span>' : ''}
+          </div>
+          <div class="review-date">${date}${editedTag}</div>
+        </div>
+        <div class="review-stars">${stars}</div>
+      </div>
+      <div class="review-text">${escapeHtml(review.text)}</div>
+      ${isOwn ? `
+        <div class="review-actions">
+          <button class="review-action-btn" onclick="editReview()">✏ EDIT</button>
+          <button class="review-action-btn delete-btn" onclick="deleteReview('${review.id}')">🗑 DELETE</button>
+        </div>
+      ` : ''}
+    `;
+    
+    list.appendChild(card);
+  });
+}
+
+function formatReviewDate(timestamp) {
+  const now = Date.now();
+  const diff = now - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return minutes + ' min ago';
+  if (hours < 24) return hours + ' hour' + (hours > 1 ? 's' : '') + ' ago';
+  if (days < 30) return days + ' day' + (days > 1 ? 's' : '') + ' ago';
+  
+  const d = new Date(timestamp);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function editReview() {
+  document.getElementById('addReviewForm').scrollIntoView({behavior: 'smooth'});
+}
+
+async function deleteReview(reviewId) {
+  if (!confirm('Delete your review?')) return;
+  
+  try {
+    await firebase.database().ref('reviews/' + reviewId).remove();
+    showToast('Review deleted', 'success');
+    userReview = null;
+    selectedRating = 0;
+    document.getElementById('reviewText').value = '';
+    document.getElementById('charCount').textContent = '0';
+    updateStarDisplay(0);
+    document.getElementById('submitReviewBtn').textContent = 'POST REVIEW';
+    setTimeout(() => loadReviews(), 500);
+  } catch(err) {
+    showToast('Failed to delete', 'error');
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function goBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+  } else {
+    window.location.href = 'home.html';
+  }
+}
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast ' + type + ' show';
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+</script>
+
+</body>
+</html>
